@@ -11,7 +11,7 @@ interface Props {
 
 export const metadata = {
   title: "Stories",
-  description: "Browse neighbourhood life stories from communities everywhere.",
+  description: "Browse life stories from Raintree Village, Katy TX.",
 };
 
 export default async function StoriesPage({ searchParams }: Props) {
@@ -50,7 +50,7 @@ export default async function StoriesPage({ searchParams }: Props) {
     <div className="container mx-auto px-4 py-12">
       <h1 className="text-3xl font-bold mb-2">Stories</h1>
       <p className="text-muted-foreground mb-8">
-        Discover the stories that make our neighbourhoods home.
+        Discover the stories that make Raintree Village home.
       </p>
 
       {/* Search & Filter */}

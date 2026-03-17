@@ -17,15 +17,15 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "900 Homes — Neighbourhood Life Stories",
+    default: "900 Homes — Raintree Village Life Stories",
     template: "%s | 900 Homes",
   },
   description:
-    "Collecting the stories that make our neighbourhoods home. Share your story, discover your neighbours.",
+    "Collecting the life stories of Raintree Village, Katy TX. Share your story, discover your neighbors.",
   openGraph: {
-    title: "900 Homes — Neighbourhood Life Stories",
+    title: "900 Homes — Raintree Village Life Stories",
     description:
-      "Collecting the stories that make our neighbourhoods home.",
+      "Collecting the life stories of Raintree Village, Katy TX.",
     type: "website",
   },
 };

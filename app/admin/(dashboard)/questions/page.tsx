@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { createServiceClient } from "@/utils/supabase/server";
 import type { Question } from "@/types/database";
 import { QuestionsList } from "./questions-list";
 
@@ -7,7 +7,7 @@ export const metadata = {
 };
 
 export default async function AdminQuestionsPage() {
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   const { data: questions } = await supabase
     .from("questions")

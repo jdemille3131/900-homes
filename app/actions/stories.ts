@@ -1,8 +1,23 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import { createClient, createServiceClient } from "@/utils/supabase/server";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+
+async function requireAdmin() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile || profile.role !== "admin") throw new Error("Forbidden");
+  return user;
+}
 
 const submitStorySchema = z.object({
   contributor_name: z.string().min(1, "Name is required").max(100),
@@ -76,10 +91,8 @@ export async function submitStory(input: SubmitStoryInput) {
 }
 
 export async function approveStory(storyId: string) {
-  const supabase = await createClient();
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
+  const user = await requireAdmin();
+  const supabase = createServiceClient();
 
   const { error } = await supabase
     .from("stories")
@@ -98,10 +111,8 @@ export async function approveStory(storyId: string) {
 }
 
 export async function rejectStory(storyId: string, adminNotes?: string) {
-  const supabase = await createClient();
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
+  const user = await requireAdmin();
+  const supabase = createServiceClient();
 
   const { error } = await supabase
     .from("stories")
@@ -120,10 +131,8 @@ export async function rejectStory(storyId: string, adminNotes?: string) {
 }
 
 export async function deleteStory(storyId: string) {
-  const supabase = await createClient();
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
+  await requireAdmin();
+  const supabase = createServiceClient();
 
   // Get media to clean up storage
   const { data: media } = await supabase

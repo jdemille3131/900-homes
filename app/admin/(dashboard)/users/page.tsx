@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { createServiceClient } from "@/utils/supabase/server";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -17,7 +17,7 @@ export const metadata = {
 };
 
 export default async function AdminUsersPage() {
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   const { data: { user: currentUser } } = await supabase.auth.getUser();
 

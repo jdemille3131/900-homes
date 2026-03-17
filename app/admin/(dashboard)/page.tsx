@@ -1,10 +1,10 @@
-import { createClient } from "@/utils/supabase/server";
+import { createServiceClient } from "@/utils/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, CheckCircle, XCircle, BookOpen } from "lucide-react";
 import Link from "next/link";
 
 export default async function AdminDashboard() {
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   const { count: pendingCount } = await supabase
     .from("stories")

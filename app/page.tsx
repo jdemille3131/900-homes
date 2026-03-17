@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen, Mic, PenLine } from "lucide-react";
+import { BookOpen, Mic, PenLine, MapPin } from "lucide-react";
 
 export default function HomePage() {
   return (
@@ -7,15 +7,20 @@ export default function HomePage() {
       {/* Hero section */}
       <section className="relative overflow-hidden bg-gradient-to-b from-amber-50 to-background py-24 md:py-32">
         <div className="container mx-auto px-4 text-center">
+          <h2 className="text-xl md:text-2xl font-semibold text-amber-700 mb-4 flex items-center justify-center gap-2">
+            <MapPin className="h-5 w-5" />
+            Raintree Village, Katy TX
+          </h2>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
-            Every home has a story.
+            1,700 homes.
             <br />
-            <span className="text-amber-700">What&apos;s yours?</span>
+            <span className="text-amber-700">1,700 stories waiting to be told.</span>
           </h1>
           <p className="mx-auto max-w-2xl text-lg md:text-xl text-muted-foreground mb-10">
-            900 Homes collects the life stories of your neighbourhood — the
-            memories, the moments, and the people that make a place feel like
-            home. Share yours today.
+            Behind every door in Raintree Village is a lifetime of memories.
+            We&apos;re on a mission to find and preserve the stories of the
+            people who make this neighborhood what it is — before they go
+            untold.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -47,8 +52,8 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-semibold">Write</h3>
               <p className="text-muted-foreground">
-                Tell us about your neighbourhood — a memory, a neighbour, a
-                place that matters to you.
+                Tell us about life in Raintree Village — a memory, a neighbor, a
+                place on these streets that matters to you.
               </p>
             </div>
             <div className="flex flex-col items-center text-center gap-4">
@@ -67,8 +72,8 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-semibold">Discover</h3>
               <p className="text-muted-foreground">
-                Browse stories from neighbourhoods everywhere and find the
-                threads that connect us all.
+                Read the stories of your neighbors and find the threads
+                that connect us all right here in Raintree Village.
               </p>
             </div>
           </div>
@@ -79,11 +84,12 @@ export default function HomePage() {
       <section className="bg-amber-50 py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
-            Your story matters.
+            We&apos;re looking for your story.
           </h2>
           <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-            No story is too small. Whether it&apos;s a childhood memory, a funny
-            encounter, or a quiet moment of belonging — we want to hear it.
+            How did you end up in Raintree Village? What do you remember most?
+            Who are the neighbors that changed your life? No story is too small —
+            help us uncover the real history of these streets.
           </p>
           <Link
             href="/submit"

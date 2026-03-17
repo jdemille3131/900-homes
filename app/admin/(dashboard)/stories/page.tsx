@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { createServiceClient } from "@/utils/supabase/server";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -20,7 +20,7 @@ const STATUS_STYLES: Record<StoryStatus, { variant: "default" | "secondary" | "d
 };
 
 async function getStories(status?: StoryStatus) {
-  const supabase = await createClient();
+  const supabase = createServiceClient();
   let query = supabase
     .from("stories")
     .select("*")
@@ -49,7 +49,7 @@ function StoryTable({ stories }: { stories: Story[] }) {
         <TableRow>
           <TableHead>Title</TableHead>
           <TableHead>Contributor</TableHead>
-          <TableHead>Neighbourhood</TableHead>
+          <TableHead>Neighborhood</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Submitted</TableHead>
           <TableHead></TableHead>

@@ -7,7 +7,13 @@ export interface Profile {
   email: string;
   display_name: string | null;
   role: UserRole;
+  avatar_url: string | null;
+  bio: string | null;
+  move_in_year: number | null;
+  street_address: string | null;
+  phone: string | null;
   created_at: string;
+  updated_at: string;
 }
 
 export interface Story {

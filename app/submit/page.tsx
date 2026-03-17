@@ -156,11 +156,11 @@ export default function SubmitPage() {
 
         <div className="grid sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="neighbourhood">Neighbourhood *</Label>
+            <Label htmlFor="neighbourhood">Neighborhood *</Label>
             <Input
               id="neighbourhood"
               name="neighbourhood"
-              placeholder="e.g. Parkdale, East Village, Brixton Hill"
+              defaultValue="Raintree Village"
               required
             />
             {errors.neighbourhood && (

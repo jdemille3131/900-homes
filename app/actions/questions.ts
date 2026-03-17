@@ -1,10 +1,10 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import { createServiceClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function createQuestion(question: string, hint?: string) {
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   // Get max sort_order
   const { data: existing } = await supabase
@@ -30,7 +30,7 @@ export async function updateQuestion(
   id: string,
   data: { question?: string; hint?: string; is_active?: boolean; sort_order?: number }
 ) {
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   const { error } = await supabase
     .from("questions")
@@ -45,7 +45,7 @@ export async function updateQuestion(
 }
 
 export async function deleteQuestion(id: string) {
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   const { error } = await supabase
     .from("questions")
@@ -60,7 +60,7 @@ export async function deleteQuestion(id: string) {
 }
 
 export async function reorderQuestions(orderedIds: string[]) {
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   const updates = orderedIds.map((id, index) =>
     supabase

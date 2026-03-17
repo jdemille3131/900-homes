@@ -5,7 +5,7 @@ export default function NotFound() {
     <div className="container mx-auto px-4 py-24 text-center">
       <h1 className="text-6xl font-bold mb-4">404</h1>
       <p className="text-xl text-muted-foreground mb-8">
-        This page doesn&apos;t exist — but your neighbourhood stories do.
+        This page doesn&apos;t exist — but the stories of Raintree Village do.
       </p>
       <div className="flex gap-4 justify-center">
         <Link

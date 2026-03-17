@@ -8,7 +8,7 @@ export function SiteFooter() {
           <div className="flex flex-col items-center md:items-start gap-1">
             <span className="text-lg font-bold">900 Homes</span>
             <p className="text-sm text-muted-foreground">
-              Collecting the stories that make our neighbourhoods home.
+              Life stories from Raintree Village, Katy TX.
             </p>
           </div>
           <nav className="flex gap-6">

@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { createServiceClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { MediaPlayer } from "@/components/media-player";
@@ -27,7 +27,7 @@ const STATUS_STYLES: Record<StoryStatus, { variant: "default" | "secondary" | "d
 
 export default async function AdminStoryReviewPage({ params }: Props) {
   const { id } = await params;
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   const { data: story } = await supabase
     .from("stories")

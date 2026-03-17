@@ -12,9 +12,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { updateUserRole, updateUserDisplayName } from "@/app/actions/users";
+import { updateUserRole, updateUserDisplayName, deleteUser } from "@/app/actions/users";
 import { toast } from "sonner";
-import { Pencil, Shield, ShieldOff } from "lucide-react";
+import { Pencil, Shield, ShieldOff, Trash2 } from "lucide-react";
 import type { Profile } from "@/types/database";
 
 interface UserActionsProps {
@@ -46,6 +46,23 @@ export function UserActions({ profile, isSelf }: UserActionsProps) {
       toast.error(result.error);
     } else {
       toast.success(`User ${newRole === "admin" ? "promoted to admin" : "demoted to user"}.`);
+      router.refresh();
+    }
+    setLoading(false);
+  }
+
+  async function handleDelete() {
+    const confirmed = confirm(
+      `Are you sure you want to permanently delete ${profile.email}? This cannot be undone.`
+    );
+    if (!confirmed) return;
+
+    setLoading(true);
+    const result = await deleteUser(profile.id);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      toast.success("User deleted.");
       router.refresh();
     }
     setLoading(false);
@@ -115,6 +132,19 @@ export function UserActions({ profile, isSelf }: UserActionsProps) {
           <Shield className="h-4 w-4" />
         )}
       </Button>
+
+      {!isSelf && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleDelete}
+          disabled={loading}
+          title="Delete user"
+          className="text-destructive hover:text-destructive"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      )}
     </div>
   );
 }

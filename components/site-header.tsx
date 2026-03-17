@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Menu, X, User, LogOut, BookOpen } from "lucide-react";
+import { Menu, X, User, LogOut, BookOpen, UserCircle } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 
@@ -82,6 +82,14 @@ export function SiteHeader() {
                     </div>
                     <div className="p-1">
                       <Link
+                        href="/account/profile"
+                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <UserCircle className="h-4 w-4" />
+                        My Profile
+                      </Link>
+                      <Link
                         href="/account/stories"
                         className="flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors"
                         onClick={() => setDropdownOpen(false)}
@@ -145,6 +153,13 @@ export function SiteHeader() {
             ))}
             {user ? (
               <>
+                <Link
+                  href="/account/profile"
+                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground py-2"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  My Profile
+                </Link>
                 <Link
                   href="/account/stories"
                   className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground py-2"
