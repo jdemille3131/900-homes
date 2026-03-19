@@ -1,6 +1,9 @@
 export type StoryStatus = "pending" | "approved" | "rejected";
 export type MediaType = "image" | "audio" | "video";
 export type UserRole = "user" | "admin";
+export type StoryType = "life_story" | "specific_event";
+export type SubmissionMode = "text" | "audio";
+export type QuestionStoryType = "life_story" | "specific_event" | "both";
 
 export interface Profile {
   id: string;
@@ -31,6 +34,9 @@ export interface Story {
   updated_at: string;
   submitted_by: string | null;
   answers: StoryAnswers | null;
+  story_type: StoryType;
+  submission_mode: SubmissionMode;
+  featured_at: string | null;
 }
 
 export interface StoryMedia {
@@ -42,6 +48,7 @@ export interface StoryMedia {
   file_size: number | null;
   mime_type: string | null;
   sort_order: number;
+  question_id: string | null;
   created_at: string;
 }
 
@@ -53,6 +60,17 @@ export interface Question {
   id: string;
   question: string;
   hint: string | null;
+  sort_order: number;
+  is_active: boolean;
+  story_type: QuestionStoryType;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Faq {
+  id: string;
+  question: string;
+  answer: string;
   sort_order: number;
   is_active: boolean;
   created_at: string;

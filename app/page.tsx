@@ -1,7 +1,53 @@
 import Link from "next/link";
-import { BookOpen, Mic, PenLine, MapPin } from "lucide-react";
+import { BookOpen, Mic, PenLine, MapPin, ArrowRight } from "lucide-react";
+import { createClient } from "@/utils/supabase/server";
+import { StoryCard } from "@/components/story-card";
+import type { Story, StoryMedia } from "@/types/database";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const supabase = await createClient();
+
+  // Featured stories first, then recent
+  const { data: featuredStories } = await supabase
+    .from("stories")
+    .select("*, story_media(*)")
+    .eq("status", "approved")
+    .not("featured_at", "is", null)
+    .order("featured_at", { ascending: false })
+    .limit(3);
+
+  const featured = (featuredStories as (Story & { story_media?: StoryMedia[] })[]) || [];
+  const featuredIds = new Set(featured.map((s) => s.id));
+
+  // Fill remaining slots with recent non-featured stories
+  const remainingSlots = 3 - featured.length;
+  let recent: (Story & { story_media?: StoryMedia[] })[] = [];
+  if (remainingSlots > 0) {
+    const { data: recentData } = await supabase
+      .from("stories")
+      .select("*, story_media(*)")
+      .eq("status", "approved")
+      .is("featured_at", null)
+      .order("created_at", { ascending: false })
+      .limit(remainingSlots);
+    recent = (recentData as (Story & { story_media?: StoryMedia[] })[]) || [];
+  }
+
+  const stories = [...featured, ...recent];
+
+  function getImageUrl(story: Story & { story_media?: StoryMedia[] }): string | null {
+    const image = story.story_media
+      ?.filter((m) => m.media_type === "image")
+      .sort((a, b) => a.sort_order - b.sort_order)[0];
+    if (!image) return null;
+    const { data: { publicUrl } } = supabase.storage
+      .from("story-images")
+      .getPublicUrl(image.storage_path);
+    return publicUrl;
+  }
+
   return (
     <div>
       {/* Hero section */}
@@ -79,6 +125,34 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* From Your Neighbors */}
+      {stories.length > 0 && (
+        <section className="py-16 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-3">
+              From Your Neighbors
+            </h2>
+            <p className="text-center text-muted-foreground mb-10">
+              Real stories from the people of Raintree Village.
+            </p>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+              {stories.map((story) => (
+                <StoryCard key={story.id} story={story} imageUrl={getImageUrl(story)} />
+              ))}
+            </div>
+            <div className="text-center mt-8">
+              <Link
+                href="/stories"
+                className="inline-flex items-center text-amber-700 font-medium hover:text-amber-800 transition-colors"
+              >
+                Read More Stories
+                <ArrowRight className="h-4 w-4 ml-1" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* CTA */}
       <section className="bg-amber-50 py-16">

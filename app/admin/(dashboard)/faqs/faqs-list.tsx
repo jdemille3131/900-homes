@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,11 +8,11 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  createQuestion,
-  updateQuestion,
-  deleteQuestion,
-  reorderQuestions,
-} from "@/app/actions/questions";
+  createFaq,
+  updateFaq,
+  deleteFaq,
+  reorderFaqs,
+} from "@/app/actions/faqs";
 import { toast } from "sonner";
 import {
   GripVertical,
@@ -27,131 +26,134 @@ import {
   Check,
   X,
 } from "lucide-react";
-import type { Question } from "@/types/database";
+import type { Faq } from "@/types/database";
 
-interface QuestionsListProps {
-  questions: Question[];
+interface FaqsListProps {
+  faqs: Faq[];
 }
 
-export function QuestionsList({ questions: initial }: QuestionsListProps) {
-  const router = useRouter();
-  const [questions, setQuestions] = useState(initial);
+export function FaqsList({ faqs: initial }: FaqsListProps) {
+  const [faqs, setFaqs] = useState(initial);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editText, setEditText] = useState("");
-  const [editHint, setEditHint] = useState("");
+  const [editQuestion, setEditQuestion] = useState("");
+  const [editAnswer, setEditAnswer] = useState("");
   const [showAdd, setShowAdd] = useState(false);
   const [newQuestion, setNewQuestion] = useState("");
-  const [newHint, setNewHint] = useState("");
+  const [newAnswer, setNewAnswer] = useState("");
   const [loading, setLoading] = useState(false);
 
-  function startEdit(q: Question) {
-    setEditingId(q.id);
-    setEditText(q.question);
-    setEditHint(q.hint || "");
+  function startEdit(f: Faq) {
+    setEditingId(f.id);
+    setEditQuestion(f.question);
+    setEditAnswer(f.answer);
   }
 
   async function saveEdit() {
     if (!editingId) return;
     setLoading(true);
-    const result = await updateQuestion(editingId, {
-      question: editText,
-      hint: editHint || undefined,
+    const result = await updateFaq(editingId, {
+      question: editQuestion,
+      answer: editAnswer,
     });
     if (result.error) {
       toast.error(result.error);
     } else {
-      toast.success("Question updated.");
-      setEditingId(null);
-      router.refresh();
-    }
-    setLoading(false);
-  }
-
-  async function handleToggleActive(q: Question) {
-    setLoading(true);
-    const newActive = !q.is_active;
-    const result = await updateQuestion(q.id, { is_active: newActive });
-    if (result.error) {
-      toast.error(result.error);
-    } else {
-      setQuestions((prev) =>
-        prev.map((item) =>
-          item.id === q.id ? { ...item, is_active: newActive } : item
+      setFaqs((prev) =>
+        prev.map((f) =>
+          f.id === editingId ? { ...f, question: editQuestion, answer: editAnswer } : f
         )
       );
-      toast.success(newActive ? "Question enabled." : "Question disabled.");
+      toast.success("FAQ updated.");
+      setEditingId(null);
     }
     setLoading(false);
   }
 
-  async function handleDelete(q: Question) {
-    if (!confirm(`Delete "${q.question.slice(0, 50)}..."? This cannot be undone.`)) return;
+  async function handleToggleActive(f: Faq) {
     setLoading(true);
-    const result = await deleteQuestion(q.id);
+    const newActive = !f.is_active;
+    const result = await updateFaq(f.id, { is_active: newActive });
     if (result.error) {
       toast.error(result.error);
     } else {
-      toast.success("Question deleted.");
-      router.refresh();
+      setFaqs((prev) =>
+        prev.map((item) =>
+          item.id === f.id ? { ...item, is_active: newActive } : item
+        )
+      );
+      toast.success(newActive ? "FAQ enabled." : "FAQ disabled.");
+    }
+    setLoading(false);
+  }
+
+  async function handleDelete(f: Faq) {
+    if (!confirm(`Delete "${f.question.slice(0, 50)}..."? This cannot be undone.`)) return;
+    setLoading(true);
+    const result = await deleteFaq(f.id);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      setFaqs((prev) => prev.filter((item) => item.id !== f.id));
+      toast.success("FAQ deleted.");
     }
     setLoading(false);
   }
 
   async function handleAdd() {
-    if (!newQuestion.trim()) return;
+    if (!newQuestion.trim() || !newAnswer.trim()) return;
     setLoading(true);
-    const result = await createQuestion(newQuestion, newHint);
+    const result = await createFaq(newQuestion, newAnswer);
     if (result.error) {
       toast.error(result.error);
     } else {
-      toast.success("Question added.");
+      toast.success("FAQ added.");
       setNewQuestion("");
-      setNewHint("");
+      setNewAnswer("");
       setShowAdd(false);
-      router.refresh();
+      // Refresh to get new item with ID
+      window.location.reload();
     }
     setLoading(false);
   }
 
   async function handleMove(index: number, direction: "up" | "down") {
     const swapIndex = direction === "up" ? index - 1 : index + 1;
-    if (swapIndex < 0 || swapIndex >= questions.length) return;
+    if (swapIndex < 0 || swapIndex >= faqs.length) return;
 
-    const reordered = [...questions];
+    const reordered = [...faqs];
     [reordered[index], reordered[swapIndex]] = [reordered[swapIndex], reordered[index]];
-    setQuestions(reordered);
+    setFaqs(reordered);
 
-    const result = await reorderQuestions(reordered.map((q) => q.id));
+    const result = await reorderFaqs(reordered.map((f) => f.id));
     if (result.error) {
       toast.error(result.error);
-      setQuestions(questions); // revert
+      setFaqs(faqs);
     }
   }
 
   return (
     <div className="space-y-3">
-      {questions.map((q, i) => (
+      {faqs.map((f, i) => (
         <Card
-          key={q.id}
-          className={!q.is_active ? "opacity-50" : undefined}
+          key={f.id}
+          className={!f.is_active ? "opacity-50" : undefined}
         >
           <CardContent className="py-4">
-            {editingId === q.id ? (
+            {editingId === f.id ? (
               <div className="space-y-3">
                 <div className="space-y-1">
                   <Label>Question</Label>
-                  <Textarea
-                    value={editText}
-                    onChange={(e) => setEditText(e.target.value)}
-                    rows={2}
+                  <Input
+                    value={editQuestion}
+                    onChange={(e) => setEditQuestion(e.target.value)}
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label>Hint (optional)</Label>
-                  <Input
-                    value={editHint}
-                    onChange={(e) => setEditHint(e.target.value)}
-                    placeholder="Helper text shown below the question"
+                  <Label>Answer</Label>
+                  <Textarea
+                    value={editAnswer}
+                    onChange={(e) => setEditAnswer(e.target.value)}
+                    rows={4}
                   />
                 </div>
                 <div className="flex gap-2">
@@ -182,26 +184,19 @@ export function QuestionsList({ questions: initial }: QuestionsListProps) {
                   <GripVertical className="h-4 w-4 text-muted-foreground" />
                   <button
                     onClick={() => handleMove(i, "down")}
-                    disabled={i === questions.length - 1 || loading}
+                    disabled={i === faqs.length - 1 || loading}
                     className="text-muted-foreground hover:text-foreground disabled:opacity-30"
                   >
                     <ArrowDown className="h-4 w-4" />
                   </button>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-mono text-muted-foreground">
-                      {i + 1}.
-                    </span>
-                    <p className="font-medium">{q.question}</p>
-                  </div>
-                  {q.hint && (
-                    <p className="text-sm text-muted-foreground ml-6">
-                      {q.hint}
-                    </p>
-                  )}
-                  {!q.is_active && (
-                    <Badge variant="secondary" className="ml-6 mt-1">
+                  <p className="font-medium mb-1">{f.question}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {f.answer}
+                  </p>
+                  {!f.is_active && (
+                    <Badge variant="secondary" className="mt-1">
                       Disabled
                     </Badge>
                   )}
@@ -210,7 +205,7 @@ export function QuestionsList({ questions: initial }: QuestionsListProps) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => startEdit(q)}
+                    onClick={() => startEdit(f)}
                     disabled={loading}
                   >
                     <Pencil className="h-4 w-4" />
@@ -218,11 +213,11 @@ export function QuestionsList({ questions: initial }: QuestionsListProps) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleToggleActive(q)}
+                    onClick={() => handleToggleActive(f)}
                     disabled={loading}
-                    title={q.is_active ? "Disable" : "Enable"}
+                    title={f.is_active ? "Disable" : "Enable"}
                   >
-                    {q.is_active ? (
+                    {f.is_active ? (
                       <EyeOff className="h-4 w-4" />
                     ) : (
                       <Eye className="h-4 w-4" />
@@ -231,7 +226,7 @@ export function QuestionsList({ questions: initial }: QuestionsListProps) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleDelete(q)}
+                    onClick={() => handleDelete(f)}
                     disabled={loading}
                     className="text-destructive hover:text-destructive"
                   >
@@ -244,31 +239,35 @@ export function QuestionsList({ questions: initial }: QuestionsListProps) {
         </Card>
       ))}
 
-      {/* Add new question */}
+      {/* Add new FAQ */}
       {showAdd ? (
         <Card className="border-dashed border-2">
           <CardContent className="py-4 space-y-3">
             <div className="space-y-1">
-              <Label>New Question</Label>
-              <Textarea
+              <Label>Question</Label>
+              <Input
                 value={newQuestion}
                 onChange={(e) => setNewQuestion(e.target.value)}
-                placeholder="What would you like to ask storytellers?"
-                rows={2}
+                placeholder="What do people commonly ask?"
               />
             </div>
             <div className="space-y-1">
-              <Label>Hint (optional)</Label>
-              <Input
-                value={newHint}
-                onChange={(e) => setNewHint(e.target.value)}
-                placeholder="Helper text shown below the question"
+              <Label>Answer</Label>
+              <Textarea
+                value={newAnswer}
+                onChange={(e) => setNewAnswer(e.target.value)}
+                placeholder="Provide a clear, helpful answer..."
+                rows={4}
               />
             </div>
             <div className="flex gap-2">
-              <Button size="sm" onClick={handleAdd} disabled={loading || !newQuestion.trim()}>
+              <Button
+                size="sm"
+                onClick={handleAdd}
+                disabled={loading || !newQuestion.trim() || !newAnswer.trim()}
+              >
                 <Plus className="h-4 w-4 mr-1" />
-                Add Question
+                Add FAQ
               </Button>
               <Button size="sm" variant="ghost" onClick={() => setShowAdd(false)}>
                 Cancel
@@ -283,7 +282,7 @@ export function QuestionsList({ questions: initial }: QuestionsListProps) {
           onClick={() => setShowAdd(true)}
         >
           <Plus className="h-4 w-4 mr-2" />
-          Add Question
+          Add FAQ
         </Button>
       )}
     </div>

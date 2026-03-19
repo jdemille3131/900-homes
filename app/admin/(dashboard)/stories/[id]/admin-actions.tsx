@@ -6,19 +6,21 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { approveStory, rejectStory, deleteStory } from "@/app/actions/stories";
+import { approveStory, rejectStory, deleteStory, toggleFeatureStory } from "@/app/actions/stories";
 import { toast } from "sonner";
-import { CheckCircle, XCircle, Trash2 } from "lucide-react";
+import { CheckCircle, XCircle, Trash2, Star } from "lucide-react";
 
 interface AdminActionsProps {
   storyId: string;
   currentStatus: string;
+  isFeatured: boolean;
 }
 
-export function AdminActions({ storyId, currentStatus }: AdminActionsProps) {
+export function AdminActions({ storyId, currentStatus, isFeatured: initialFeatured }: AdminActionsProps) {
   const router = useRouter();
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState<string | null>(null);
+  const [isFeatured, setIsFeatured] = useState(initialFeatured);
 
   async function handleApprove() {
     setLoading("approve");
@@ -40,6 +42,18 @@ export function AdminActions({ storyId, currentStatus }: AdminActionsProps) {
     } else {
       toast.success("Story rejected.");
       router.refresh();
+    }
+    setLoading(null);
+  }
+
+  async function handleToggleFeature() {
+    setLoading("feature");
+    const result = await toggleFeatureStory(storyId);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      setIsFeatured(!!result.featured);
+      toast.success(result.featured ? "Story featured!" : "Story unfeatured.");
     }
     setLoading(null);
   }
@@ -94,6 +108,22 @@ export function AdminActions({ storyId, currentStatus }: AdminActionsProps) {
           >
             <XCircle className="h-4 w-4 mr-2" />
             {loading === "reject" ? "Rejecting..." : "Reject"}
+          </Button>
+        )}
+
+        {currentStatus === "approved" && (
+          <Button
+            onClick={handleToggleFeature}
+            disabled={loading !== null}
+            variant={isFeatured ? "default" : "outline"}
+            className={isFeatured ? "bg-amber-600 hover:bg-amber-700" : ""}
+          >
+            <Star className={`h-4 w-4 mr-2 ${isFeatured ? "fill-current" : ""}`} />
+            {loading === "feature"
+              ? "Updating..."
+              : isFeatured
+                ? "Featured"
+                : "Feature This Story"}
           </Button>
         )}
       </div>

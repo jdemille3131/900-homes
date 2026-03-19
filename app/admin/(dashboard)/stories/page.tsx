@@ -11,6 +11,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
+import { Star, Mic } from "lucide-react";
 import type { Story, StoryStatus } from "@/types/database";
 
 const STATUS_STYLES: Record<StoryStatus, { variant: "default" | "secondary" | "destructive"; label: string }> = {
@@ -61,12 +62,23 @@ function StoryTable({ stories }: { stories: Story[] }) {
           return (
             <TableRow key={story.id}>
               <TableCell className="font-medium max-w-[200px] truncate">
-                {story.title}
+                <span className="flex items-center gap-1.5">
+                  {story.featured_at && <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500 shrink-0" />}
+                  {story.title}
+                </span>
               </TableCell>
               <TableCell>{story.contributor_name}</TableCell>
               <TableCell>{story.neighbourhood}</TableCell>
               <TableCell>
-                <Badge variant={style.variant}>{style.label}</Badge>
+                <div className="flex items-center gap-1.5">
+                  <Badge variant={style.variant}>{style.label}</Badge>
+                  {story.submission_mode === "audio" && (
+                    <Badge variant="outline" className="text-xs">
+                      <Mic className="h-3 w-3 mr-0.5" />
+                      Audio
+                    </Badge>
+                  )}
+                </div>
               </TableCell>
               <TableCell className="text-sm text-muted-foreground">
                 {formatDistanceToNow(new Date(story.created_at), {

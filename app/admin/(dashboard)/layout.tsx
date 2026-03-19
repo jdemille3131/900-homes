@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { LayoutDashboard, ListChecks, Users, MessageCircleQuestion, LogOut } from "lucide-react";
+import { LayoutDashboard, ListChecks, Users, MessageCircleQuestion, HelpCircle, LogOut } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 export default function AdminLayout({
   children,
@@ -39,6 +41,13 @@ export default function AdminLayout({
           >
             <Users className="h-4 w-4" />
             Users
+          </Link>
+          <Link
+            href="/admin/faqs"
+            className="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium hover:bg-muted transition-colors"
+          >
+            <HelpCircle className="h-4 w-4" />
+            FAQs
           </Link>
           <Link
             href="/"

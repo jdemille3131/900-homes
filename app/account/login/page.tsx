@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 export default function LoginPage() {
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -33,7 +36,7 @@ export default function LoginPage() {
       return;
     }
 
-    window.location.href = "/account/stories";
+    window.location.href = redirect || "/account/stories";
   }
 
   return (
@@ -75,7 +78,7 @@ export default function LoginPage() {
           </form>
           <p className="text-sm text-muted-foreground text-center mt-4">
             Don&apos;t have an account?{" "}
-            <Link href="/account/register" className="text-amber-700 hover:underline">
+            <Link href={redirect ? `/account/register?redirect=${redirect}` : "/account/register"} className="text-amber-700 hover:underline">
               Sign up
             </Link>
           </p>

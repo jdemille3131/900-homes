@@ -21,10 +21,12 @@ async function requireAdmin() {
 
 const submitStorySchema = z.object({
   contributor_name: z.string().min(1, "Name is required").max(100),
-  contributor_email: z.string().email().optional().or(z.literal("")),
+  contributor_email: z.string().email("A valid email is required"),
   title: z.string().min(1, "Title is required").max(200),
-  body: z.string().min(10, "Story must be at least 10 characters"),
+  body: z.string().min(1, "Story content is required"),
   neighbourhood: z.string().min(1, "Neighbourhood is required").max(100),
+  story_type: z.enum(["life_story", "specific_event"]),
+  submission_mode: z.enum(["text", "audio"]),
   answers: z.record(z.string(), z.string()).optional(),
   media: z.array(
     z.object({
@@ -33,6 +35,7 @@ const submitStorySchema = z.object({
       file_name: z.string().optional(),
       file_size: z.number().optional(),
       mime_type: z.string().optional(),
+      question_id: z.string().uuid().optional(),
     })
   ).optional(),
 });
@@ -46,7 +49,7 @@ export async function submitStory(input: SubmitStoryInput) {
   }
 
   const supabase = await createClient();
-  const { media, contributor_email, answers, ...storyData } = parsed.data;
+  const { media, contributor_email, answers, story_type, submission_mode, ...storyData } = parsed.data;
 
   // Link story to authenticated user if logged in
   const { data: { user } } = await supabase.auth.getUser();
@@ -55,7 +58,9 @@ export async function submitStory(input: SubmitStoryInput) {
     .from("stories")
     .insert({
       ...storyData,
-      contributor_email: contributor_email || null,
+      contributor_email,
+      story_type,
+      submission_mode,
       status: "pending",
       submitted_by: user?.id || null,
       answers: answers || null,
@@ -75,6 +80,7 @@ export async function submitStory(input: SubmitStoryInput) {
       file_name: m.file_name || null,
       file_size: m.file_size || null,
       mime_type: m.mime_type || null,
+      question_id: m.question_id || null,
       sort_order: i,
     }));
 
@@ -128,6 +134,55 @@ export async function rejectStory(storyId: string, adminNotes?: string) {
 
   revalidatePath("/admin/stories");
   return { success: true };
+}
+
+export async function updateStoryFields(
+  storyId: string,
+  data: { title?: string; contributor_name?: string; body?: string; neighbourhood?: string }
+) {
+  await requireAdmin();
+  const supabase = createServiceClient();
+
+  const { error } = await supabase
+    .from("stories")
+    .update(data)
+    .eq("id", storyId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/stories");
+  revalidatePath(`/stories/${storyId}`);
+  revalidatePath("/admin/stories");
+  revalidatePath(`/admin/stories/${storyId}`);
+  return { success: true };
+}
+
+export async function toggleFeatureStory(storyId: string) {
+  await requireAdmin();
+  const supabase = createServiceClient();
+
+  // Check current featured state
+  const { data: story } = await supabase
+    .from("stories")
+    .select("featured_at")
+    .eq("id", storyId)
+    .single();
+
+  if (!story) return { error: "Story not found" };
+
+  const { error } = await supabase
+    .from("stories")
+    .update({
+      featured_at: story.featured_at ? null : new Date().toISOString(),
+    })
+    .eq("id", storyId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/");
+  revalidatePath("/stories");
+  revalidatePath("/admin/stories");
+  return { success: true, featured: !story.featured_at };
 }
 
 export async function deleteStory(storyId: string) {

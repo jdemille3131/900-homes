@@ -38,6 +38,7 @@ export function SiteHeader() {
     { href: "/", label: "Home" },
     { href: "/stories", label: "Stories" },
     { href: "/submit", label: "Share Your Story" },
+    { href: "/faq", label: "FAQ" },
   ];
 
   return (

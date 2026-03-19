@@ -7,7 +7,7 @@ export function StoryBody({ body }: StoryBodyProps) {
   const sections = body.split(/\n\n/).filter(Boolean);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {sections.map((section, i) => {
         // Check if section starts with a bold question: **...**
         const match = section.match(/^\*\*(.+?)\*\*\n?([\s\S]*)$/);
@@ -16,13 +16,13 @@ export function StoryBody({ body }: StoryBodyProps) {
           const question = match[1];
           const answer = match[2].trim();
           return (
-            <div key={i} className="space-y-2">
-              <h3 className="text-sm font-semibold text-amber-800 uppercase tracking-wide">
+            <div key={i} className="border-l-2 border-amber-200 pl-5">
+              <p className="text-sm italic text-amber-700 mb-3">
                 {question}
-              </h3>
-              <div className="text-base leading-relaxed">
+              </p>
+              <div className="text-lg leading-relaxed">
                 {answer.split("\n").map((line, j) => (
-                  <p key={j} className={j > 0 ? "mt-2" : undefined}>
+                  <p key={j} className={j > 0 ? "mt-3" : undefined}>
                     {line}
                   </p>
                 ))}
@@ -33,9 +33,9 @@ export function StoryBody({ body }: StoryBodyProps) {
 
         // Plain paragraph
         return (
-          <div key={i} className="text-base leading-relaxed">
+          <div key={i} className="text-lg leading-relaxed">
             {section.split("\n").map((line, j) => (
-              <p key={j} className={j > 0 ? "mt-2" : undefined}>
+              <p key={j} className={j > 0 ? "mt-3" : undefined}>
                 {line}
               </p>
             ))}
