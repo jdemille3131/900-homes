@@ -44,6 +44,9 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
     accent_color: "#b45309",
     home_count: "",
     admin_notes: "",
+    city: "",
+    county: "",
+    state: "",
   });
   const [showAdd, setShowAdd] = useState(false);
   const [newData, setNewData] = useState({
@@ -52,6 +55,9 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
     tagline: "",
     accent_color: "#b45309",
     home_count: "",
+    city: "",
+    county: "",
+    state: "",
   });
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -119,6 +125,9 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
       accent_color: nh.accent_color,
       home_count: nh.home_count || "",
       admin_notes: nh.admin_notes || "",
+      city: nh.city || "",
+      county: nh.county || "",
+      state: nh.state || "",
     });
   }
 
@@ -132,6 +141,9 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
       accent_color: editData.accent_color,
       home_count: editData.home_count || undefined,
       admin_notes: editData.admin_notes || undefined,
+      city: editData.city || undefined,
+      county: editData.county || undefined,
+      state: editData.state || undefined,
     });
     if (result.error) {
       toast.error(result.error);
@@ -168,12 +180,15 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
       tagline: newData.tagline || undefined,
       accent_color: newData.accent_color,
       home_count: newData.home_count || undefined,
+      city: newData.city || undefined,
+      county: newData.county || undefined,
+      state: newData.state || undefined,
     });
     if (result.error) {
       toast.error(result.error);
     } else {
       toast.success("Neighbourhood created.");
-      setNewData({ name: "", slug: "", tagline: "", accent_color: "#b45309", home_count: "" });
+      setNewData({ name: "", slug: "", tagline: "", accent_color: "#b45309", home_count: "", city: "", county: "", state: "" });
       setShowAdd(false);
       router.refresh();
     }
@@ -238,6 +253,32 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
                       value={editData.home_count}
                       onChange={(e) => setEditData({ ...editData, home_count: e.target.value })}
                       placeholder="e.g. Over 900"
+                    />
+                  </div>
+                </div>
+                <div className="grid sm:grid-cols-3 gap-3">
+                  <div className="space-y-1">
+                    <Label>City</Label>
+                    <Input
+                      value={editData.city}
+                      onChange={(e) => setEditData({ ...editData, city: e.target.value })}
+                      placeholder="e.g. Katy"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label>County</Label>
+                    <Input
+                      value={editData.county}
+                      onChange={(e) => setEditData({ ...editData, county: e.target.value })}
+                      placeholder="e.g. Harris"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label>State</Label>
+                    <Input
+                      value={editData.state}
+                      onChange={(e) => setEditData({ ...editData, state: e.target.value })}
+                      placeholder="e.g. TX"
                     />
                   </div>
                 </div>
@@ -342,7 +383,9 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
                   {nh.tagline && (
                     <p className="text-sm text-muted-foreground mt-1">{nh.tagline}</p>
                   )}
-                  <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground flex-wrap">
+                    {nh.city && <span>{nh.city}{nh.state ? `, ${nh.state}` : ""}</span>}
+                    {nh.county && <span>{nh.county} County</span>}
                     {nh.home_count && <span>{nh.home_count} homes</span>}
                     <span
                       className="inline-flex items-center gap-1"
@@ -457,6 +500,32 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
                   value={newData.home_count}
                   onChange={(e) => setNewData({ ...newData, home_count: e.target.value })}
                   placeholder="e.g. Over 900"
+                />
+              </div>
+            </div>
+            <div className="grid sm:grid-cols-3 gap-3">
+              <div className="space-y-1">
+                <Label>City</Label>
+                <Input
+                  value={newData.city}
+                  onChange={(e) => setNewData({ ...newData, city: e.target.value })}
+                  placeholder="e.g. Katy"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label>County</Label>
+                <Input
+                  value={newData.county}
+                  onChange={(e) => setNewData({ ...newData, county: e.target.value })}
+                  placeholder="e.g. Harris"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label>State</Label>
+                <Input
+                  value={newData.state}
+                  onChange={(e) => setNewData({ ...newData, state: e.target.value })}
+                  placeholder="e.g. TX"
                 />
               </div>
             </div>

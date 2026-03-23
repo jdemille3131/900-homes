@@ -17,6 +17,9 @@ export async function createNeighbourhood(input: {
   description?: string;
   accent_color?: string;
   home_count?: string;
+  city?: string;
+  county?: string;
+  state?: string;
 }) {
   const supabase = createServiceClient();
 
@@ -29,6 +32,9 @@ export async function createNeighbourhood(input: {
     description: input.description || null,
     accent_color: input.accent_color || "#b45309",
     home_count: input.home_count || null,
+    city: input.city || null,
+    county: input.county || null,
+    state: input.state || null,
   });
 
   if (error) return { error: error.message };
@@ -49,6 +55,9 @@ export async function updateNeighbourhood(
     home_count?: string;
     logo_url?: string;
     admin_notes?: string;
+    city?: string;
+    county?: string;
+    state?: string;
     is_active?: boolean;
   }
 ) {

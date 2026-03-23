@@ -15,6 +15,9 @@ export interface Neighbourhood {
   logo_url: string | null;
   home_count: string | null;
   admin_notes: string | null;
+  city: string | null;
+  county: string | null;
+  state: string | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -31,6 +34,9 @@ export interface Profile {
   street_address: string | null;
   phone: string | null;
   neighbourhood_id: string | null;
+  city: string | null;
+  county: string | null;
+  state: string | null;
   created_at: string;
   updated_at: string;
 }

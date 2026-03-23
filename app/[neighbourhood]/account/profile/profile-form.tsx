@@ -34,6 +34,9 @@ export function ProfileForm({ profile, userId }: ProfileFormProps) {
       street_address: formData.get("street_address") as string,
       phone: formData.get("phone") as string,
       avatar_url: avatarUrl,
+      city: formData.get("city") as string,
+      county: formData.get("county") as string,
+      state: formData.get("state") as string,
     });
 
     if (result.error) {
@@ -96,6 +99,36 @@ export function ProfileForm({ profile, userId }: ProfileFormProps) {
             defaultValue={profile.move_in_year || ""}
             placeholder="e.g. 2005"
           />
+        </div>
+
+        <div className="grid sm:grid-cols-3 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="city">City</Label>
+            <Input
+              id="city"
+              name="city"
+              defaultValue={profile.city || ""}
+              placeholder="e.g. Katy"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="county">County</Label>
+            <Input
+              id="county"
+              name="county"
+              defaultValue={profile.county || ""}
+              placeholder="e.g. Harris"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="state">State</Label>
+            <Input
+              id="state"
+              name="state"
+              defaultValue={profile.state || ""}
+              placeholder="e.g. TX"
+            />
+          </div>
         </div>
       </div>
 
