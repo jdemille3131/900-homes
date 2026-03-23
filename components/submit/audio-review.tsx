@@ -20,6 +20,7 @@ interface AudioReviewProps {
   defaultName: string;
   defaultEmail: string;
   onBack: () => void;
+  successUrl?: string;
 }
 
 export function AudioReview({
@@ -30,6 +31,7 @@ export function AudioReview({
   defaultName,
   defaultEmail,
   onBack,
+  successUrl,
 }: AudioReviewProps) {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
@@ -105,7 +107,7 @@ export function AudioReview({
       return;
     }
 
-    router.push("/submit/success");
+    router.push(successUrl || "/submit/success");
   }
 
   const recordedCount = Object.keys(recordings).length;

@@ -21,6 +21,7 @@ interface TextFormProps {
   defaultName: string;
   defaultEmail: string;
   onBack: () => void;
+  successUrl?: string;
 }
 
 export function TextForm({
@@ -30,6 +31,7 @@ export function TextForm({
   defaultName,
   defaultEmail,
   onBack,
+  successUrl,
 }: TextFormProps) {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
@@ -93,7 +95,7 @@ export function TextForm({
       return;
     }
 
-    router.push("/submit/success");
+    router.push(successUrl || "/submit/success");
   }
 
   return (

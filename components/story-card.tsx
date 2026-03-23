@@ -8,6 +8,7 @@ import type { Story, StoryMedia } from "@/types/database";
 interface StoryCardProps {
   story: Story;
   imageUrl?: string | null;
+  linkPrefix?: string;
 }
 
 function getExcerpt(body: string): string {
@@ -29,14 +30,14 @@ function getExcerpt(body: string): string {
   return clean.length > 150 ? clean.slice(0, 150) + "..." : clean;
 }
 
-export function StoryCard({ story, imageUrl }: StoryCardProps) {
+export function StoryCard({ story, imageUrl, linkPrefix = "" }: StoryCardProps) {
   const excerpt = getExcerpt(story.body);
   const isLifeStory = story.story_type === "life_story";
   const isAudio = story.submission_mode === "audio";
   const isFeatured = !!story.featured_at;
 
   return (
-    <Link href={`/stories/${story.id}`}>
+    <Link href={`${linkPrefix}/stories/${story.id}`}>
       <Card className={`h-full hover:shadow-md transition-shadow cursor-pointer overflow-hidden ${isFeatured ? "ring-2 ring-[var(--nh-accent)]" : ""}`}>
         {/* Image */}
         <div className="relative aspect-[3/2] bg-muted">

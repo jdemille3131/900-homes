@@ -1,6 +1,13 @@
 import Link from "next/link";
+import type { Neighbourhood } from "@/types/database";
 
-export function SiteFooter() {
+interface SiteFooterProps {
+  neighbourhood?: Neighbourhood;
+}
+
+export function SiteFooter({ neighbourhood }: SiteFooterProps) {
+  const prefix = neighbourhood ? `/${neighbourhood.slug}` : "";
+
   return (
     <footer className="border-t bg-muted/40">
       <div className="container mx-auto px-4 py-8">
@@ -8,22 +15,28 @@ export function SiteFooter() {
           <div className="flex flex-col items-center md:items-start gap-1">
             <span className="text-lg font-bold">900 Homes</span>
             <p className="text-sm text-muted-foreground">
-              Life stories from Raintree Village, Katy TX.
+              {neighbourhood
+                ? `Life stories from ${neighbourhood.name}.`
+                : "Collecting neighbourhood life stories."}
             </p>
           </div>
           <nav className="flex gap-6">
-            <Link
-              href="/stories"
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              Stories
-            </Link>
-            <Link
-              href="/submit"
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              Submit
-            </Link>
+            {neighbourhood ? (
+              <>
+                <Link
+                  href={`${prefix}/stories`}
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  Stories
+                </Link>
+                <Link
+                  href={`${prefix}/submit`}
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  Submit
+                </Link>
+              </>
+            ) : null}
             <Link
               href="/admin/login"
               className="text-sm text-muted-foreground hover:text-foreground"
