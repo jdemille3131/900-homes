@@ -13,6 +13,7 @@ import {
   updateNeighbourhood,
   toggleNeighbourhoodActive,
 } from "@/app/actions/neighbourhoods";
+import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import {
   Plus,
@@ -23,6 +24,8 @@ import {
   X,
   MapPin,
   ExternalLink,
+  Upload,
+  Trash2,
 } from "lucide-react";
 import type { Neighbourhood } from "@/types/database";
 
@@ -51,6 +54,61 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
     home_count: "",
   });
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  async function uploadImage(file: File, neighbourhoodId: string): Promise<string | null> {
+    const supabase = createClient();
+    const ext = file.name.split(".").pop();
+    const path = `${neighbourhoodId}/logo.${ext}`;
+
+    const { error } = await supabase.storage
+      .from("neighbourhood-logos")
+      .upload(path, file, { cacheControl: "3600", upsert: true });
+
+    if (error) {
+      toast.error("Failed to upload image: " + error.message);
+      return null;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from("neighbourhood-logos")
+      .getPublicUrl(path);
+
+    return publicUrl;
+  }
+
+  async function handleImageUpload(file: File, neighbourhoodId: string) {
+    setUploading(true);
+    const url = await uploadImage(file, neighbourhoodId);
+    if (url) {
+      const result = await updateNeighbourhood(neighbourhoodId, { logo_url: url });
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        setNeighbourhoods((prev) =>
+          prev.map((nh) => nh.id === neighbourhoodId ? { ...nh, logo_url: url } : nh)
+        );
+        toast.success("Image uploaded.");
+        router.refresh();
+      }
+    }
+    setUploading(false);
+  }
+
+  async function handleRemoveImage(neighbourhoodId: string) {
+    setLoading(true);
+    const result = await updateNeighbourhood(neighbourhoodId, { logo_url: "" });
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      setNeighbourhoods((prev) =>
+        prev.map((nh) => nh.id === neighbourhoodId ? { ...nh, logo_url: null } : nh)
+      );
+      toast.success("Image removed.");
+      router.refresh();
+    }
+    setLoading(false);
+  }
 
   function startEdit(nh: Neighbourhood) {
     setEditingId(nh.id);
@@ -183,6 +241,61 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
                     />
                   </div>
                 </div>
+                {/* Image upload */}
+                <div className="space-y-2">
+                  <Label>Neighbourhood Image</Label>
+                  {(() => {
+                    const currentNh = neighbourhoods.find((n) => n.id === editingId);
+                    return currentNh?.logo_url ? (
+                      <div className="flex items-start gap-3">
+                        <img
+                          src={currentNh.logo_url}
+                          alt={currentNh.name}
+                          className="h-20 w-32 object-cover rounded border"
+                        />
+                        <div className="flex flex-col gap-2">
+                          <label className="inline-flex items-center gap-1 text-xs nh-text cursor-pointer hover:underline">
+                            <Upload className="h-3 w-3" />
+                            Replace
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleImageUpload(file, editingId!);
+                              }}
+                            />
+                          </label>
+                          <button
+                            onClick={() => handleRemoveImage(editingId!)}
+                            className="inline-flex items-center gap-1 text-xs text-destructive hover:underline"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <label className="flex items-center gap-2 p-4 border-2 border-dashed rounded-lg cursor-pointer hover:border-muted-foreground/50 transition-colors">
+                        <Upload className="h-5 w-5 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">
+                          {uploading ? "Uploading..." : "Click to upload an image"}
+                        </span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          disabled={uploading}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleImageUpload(file, editingId!);
+                          }}
+                        />
+                      </label>
+                    );
+                  })()}
+                </div>
                 <div className="space-y-1">
                   <Label>Admin Notes</Label>
                   <Textarea
@@ -206,12 +319,20 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
               </div>
             ) : (
               <div className="flex items-start gap-3">
-                <div
-                  className="flex h-10 w-10 items-center justify-center rounded-full shrink-0 mt-0.5"
-                  style={{ backgroundColor: nh.accent_color + "20", color: nh.accent_color }}
-                >
-                  <MapPin className="h-5 w-5" />
-                </div>
+                {nh.logo_url ? (
+                  <img
+                    src={nh.logo_url}
+                    alt={nh.name}
+                    className="h-12 w-12 object-cover rounded-lg shrink-0 mt-0.5"
+                  />
+                ) : (
+                  <div
+                    className="flex h-12 w-12 items-center justify-center rounded-lg shrink-0 mt-0.5"
+                    style={{ backgroundColor: nh.accent_color + "20", color: nh.accent_color }}
+                  >
+                    <MapPin className="h-5 w-5" />
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <p className="font-semibold">{nh.name}</p>

@@ -48,12 +48,20 @@ export default async function MarketingPage() {
                     className="group block p-6 rounded-xl border bg-background hover:shadow-lg transition-all"
                   >
                     <div className="flex items-start gap-3 mb-3">
-                      <div
-                        className="flex h-10 w-10 items-center justify-center rounded-full shrink-0"
-                        style={{ backgroundColor: nh.accent_color + "20", color: nh.accent_color }}
-                      >
-                        <MapPin className="h-5 w-5" />
-                      </div>
+                      {nh.logo_url ? (
+                        <img
+                          src={nh.logo_url}
+                          alt={nh.name}
+                          className="h-10 w-10 object-cover rounded-full shrink-0"
+                        />
+                      ) : (
+                        <div
+                          className="flex h-10 w-10 items-center justify-center rounded-full shrink-0"
+                          style={{ backgroundColor: nh.accent_color + "20", color: nh.accent_color }}
+                        >
+                          <MapPin className="h-5 w-5" />
+                        </div>
+                      )}
                       <div className="flex-1 min-w-0">
                         <h3 className="font-semibold group-hover:underline">{nh.name}</h3>
                         {nh.home_count && (
