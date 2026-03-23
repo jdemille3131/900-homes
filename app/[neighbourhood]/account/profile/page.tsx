@@ -3,12 +3,18 @@ import { redirect } from "next/navigation";
 import { ProfileForm } from "./profile-form";
 import type { Profile } from "@/types/database";
 
-export default async function ProfilePage() {
+interface Props {
+  params: Promise<{ neighbourhood: string }>;
+}
+
+export default async function ProfilePage({ params }: Props) {
+  const { neighbourhood: slug } = await params;
+  const prefix = `/${slug}`;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/account/login");
+    redirect(`${prefix}/account/login`);
   }
 
   const serviceClient = createServiceClient();
@@ -19,7 +25,7 @@ export default async function ProfilePage() {
     .single();
 
   if (!profile) {
-    redirect("/account/login");
+    redirect(`${prefix}/account/login`);
   }
 
   return (
