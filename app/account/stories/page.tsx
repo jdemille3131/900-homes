@@ -63,7 +63,7 @@ export default async function MyStoriesPage() {
         </div>
         <Link
           href="/submit"
-          className="inline-flex items-center justify-center h-10 px-6 rounded-lg bg-amber-700 text-white font-medium hover:bg-amber-800 transition-colors"
+          className="inline-flex items-center justify-center h-10 px-6 rounded-lg nh-bg text-white font-medium nh-bg-hover transition-colors"
         >
           <PenLine className="h-4 w-4 mr-2" />
           New Story
@@ -117,7 +117,7 @@ export default async function MyStoriesPage() {
                     {story.status === "approved" && (
                       <Link
                         href={`/stories/${story.id}`}
-                        className="flex items-center gap-1 text-amber-700 hover:underline"
+                        className="flex items-center gap-1 nh-text hover:underline"
                       >
                         <Eye className="h-3 w-3" />
                         View published
@@ -146,7 +146,7 @@ export default async function MyStoriesPage() {
           </p>
           <Link
             href="/submit"
-            className="text-amber-700 hover:underline font-medium"
+            className="nh-text hover:underline font-medium"
           >
             Share your first story
           </Link>

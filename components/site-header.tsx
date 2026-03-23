@@ -64,7 +64,7 @@ export function SiteHeader() {
             <div className="relative">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-amber-100 text-amber-700 font-medium text-sm hover:bg-amber-200 transition-colors"
+                className="inline-flex items-center justify-center h-8 w-8 rounded-full nh-bg-100 nh-text font-medium text-sm nh-bg-hover transition-colors"
                 aria-label="Account menu"
               >
                 <User className="h-4 w-4" />
@@ -120,7 +120,7 @@ export function SiteHeader() {
               </Link>
               <Link
                 href="/account/register"
-                className="inline-flex items-center justify-center h-8 px-4 rounded-lg bg-amber-700 text-white font-medium text-sm hover:bg-amber-800 transition-colors"
+                className="inline-flex items-center justify-center h-8 px-4 rounded-lg nh-bg text-white font-medium text-sm nh-bg-hover transition-colors"
               >
                 Sign Up
               </Link>
@@ -189,7 +189,7 @@ export function SiteHeader() {
                 </Link>
                 <Link
                   href="/account/register"
-                  className="text-sm font-medium text-amber-700 py-2"
+                  className="text-sm font-medium nh-text py-2"
                   onClick={() => setMobileOpen(false)}
                 >
                   Sign Up

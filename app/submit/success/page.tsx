@@ -12,7 +12,7 @@ export default function SubmitSuccessPage() {
       </p>
       <p className="text-sm text-muted-foreground mb-8">
         If you&apos;re signed in, you can track your story&apos;s status on your{" "}
-        <Link href="/account/stories" className="text-amber-700 hover:underline font-medium">
+        <Link href="/account/stories" className="nh-text hover:underline font-medium">
           My Stories
         </Link>{" "}
         page.
@@ -20,7 +20,7 @@ export default function SubmitSuccessPage() {
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <Link
           href="/submit"
-          className="inline-flex items-center justify-center h-10 px-6 rounded-lg bg-amber-700 text-white font-medium hover:bg-amber-800 transition-colors"
+          className="inline-flex items-center justify-center h-10 px-6 rounded-lg nh-bg text-white font-medium nh-bg-hover transition-colors"
         >
           Submit Another
         </Link>

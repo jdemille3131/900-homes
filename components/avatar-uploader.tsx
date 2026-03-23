@@ -61,7 +61,7 @@ export function AvatarUploader({ userId, currentUrl, onUploaded }: AvatarUploade
         type="button"
         onClick={() => inputRef.current?.click()}
         disabled={uploading}
-        className="relative group h-24 w-24 rounded-full overflow-hidden border-2 border-muted hover:border-amber-700 transition-colors cursor-pointer"
+        className="relative group h-24 w-24 rounded-full overflow-hidden border-2 border-muted hover:nh-border transition-colors cursor-pointer"
       >
         {preview ? (
           <img src={preview} alt="Avatar" className="h-full w-full object-cover" />

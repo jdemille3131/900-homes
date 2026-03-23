@@ -37,7 +37,7 @@ export function StoryCard({ story, imageUrl }: StoryCardProps) {
 
   return (
     <Link href={`/stories/${story.id}`}>
-      <Card className={`h-full hover:shadow-md transition-shadow cursor-pointer overflow-hidden ${isFeatured ? "ring-2 ring-amber-400" : ""}`}>
+      <Card className={`h-full hover:shadow-md transition-shadow cursor-pointer overflow-hidden ${isFeatured ? "ring-2 ring-[var(--nh-accent)]" : ""}`}>
         {/* Image */}
         <div className="relative aspect-[3/2] bg-muted">
           {imageUrl ? (
@@ -47,14 +47,14 @@ export function StoryCard({ story, imageUrl }: StoryCardProps) {
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-amber-50">
-              <User className="h-16 w-16 text-amber-200" />
+            <div className="w-full h-full flex items-center justify-center nh-bg-light">
+              <User className="h-16 w-16 text-muted-foreground/30" />
             </div>
           )}
           {/* Featured star */}
           {isFeatured && (
             <div className="absolute top-2 right-2">
-              <Badge className="bg-amber-500 text-white hover:bg-amber-500">
+              <Badge className="nh-bg-light0 text-white hover:nh-bg-light0">
                 <Star className="h-3 w-3 mr-1 fill-current" />
                 Featured
               </Badge>
@@ -63,7 +63,7 @@ export function StoryCard({ story, imageUrl }: StoryCardProps) {
           {/* Badges overlaid on image */}
           <div className="absolute top-2 left-2 flex items-center gap-1.5">
             {isLifeStory ? (
-              <Badge className="text-xs bg-amber-100/90 text-amber-800 hover:bg-amber-100 backdrop-blur-sm">
+              <Badge className="text-xs nh-bg-100/90 nh-text-dark hover:nh-bg-100 backdrop-blur-sm">
                 <BookOpen className="h-3 w-3 mr-1" />
                 Life Story
               </Badge>
@@ -87,7 +87,7 @@ export function StoryCard({ story, imageUrl }: StoryCardProps) {
             {story.title}
           </h3>
           <div className="flex items-center justify-between mt-1">
-            <p className="text-sm text-amber-800 font-medium">
+            <p className="text-sm nh-text-dark font-medium">
               {story.contributor_name}
             </p>
             <span className="text-xs text-muted-foreground flex items-center gap-1">

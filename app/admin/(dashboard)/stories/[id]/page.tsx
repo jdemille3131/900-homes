@@ -98,8 +98,8 @@ export default async function AdminStoryReviewPage({ params }: Props) {
       {submitterProfile && (
         <div className="border rounded-lg p-4 mb-6 bg-muted/30">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100">
-              <User className="h-5 w-5 text-amber-700" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full nh-bg-100">
+              <User className="h-5 w-5 nh-text" />
             </div>
             <div className="flex-1">
               <p className="font-medium">{submitterProfile.display_name || "No name set"}</p>
@@ -148,7 +148,7 @@ export default async function AdminStoryReviewPage({ params }: Props) {
         {isAudio && sortedMedia.some((m) => m.media_type === "audio") ? (
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-4">
-              <Mic className="h-4 w-4 text-amber-700" />
+              <Mic className="h-4 w-4 nh-text" />
               <h3 className="font-semibold">Audio Recordings</h3>
               <Badge variant="outline" className="text-xs">
                 {sortedMedia.filter((m) => m.media_type === "audio").length} recording{sortedMedia.filter((m) => m.media_type === "audio").length !== 1 ? "s" : ""}
@@ -163,12 +163,12 @@ export default async function AdminStoryReviewPage({ params }: Props) {
                 const question = m.question_id ? questionsMap[m.question_id] : null;
 
                 return (
-                  <div key={m.id} className="border-l-2 border-amber-200 pl-4 py-2">
+                  <div key={m.id} className="border-l-2 nh-border-light pl-4 py-2">
                     <p className="text-xs text-muted-foreground mb-1">
                       Recording {i + 1}
                     </p>
                     {question && (
-                      <p className="text-sm font-medium italic text-amber-700 mb-2">
+                      <p className="text-sm font-medium italic nh-text mb-2">
                         {question.question}
                       </p>
                     )}

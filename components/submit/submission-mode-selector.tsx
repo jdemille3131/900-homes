@@ -40,11 +40,11 @@ export function SubmissionModeSelector({ onSelect, onBack }: SubmissionModeSelec
         {options.map((opt) => (
           <Card
             key={opt.mode}
-            className="cursor-pointer hover:border-amber-600 hover:shadow-md transition-all"
+            className="cursor-pointer hover:nh-border hover:shadow-md transition-all"
             onClick={() => onSelect(opt.mode)}
           >
             <CardContent className="py-8 flex flex-col items-center text-center gap-3">
-              <opt.icon className="h-10 w-10 text-amber-700" />
+              <opt.icon className="h-10 w-10 nh-text" />
               <h3 className="text-lg font-semibold">{opt.title}</h3>
               <p className="text-sm text-muted-foreground">{opt.description}</p>
             </CardContent>

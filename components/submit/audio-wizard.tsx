@@ -189,7 +189,7 @@ export function AudioWizard({ questions, storyId, onComplete, onBack }: AudioWiz
         </div>
         <div className="h-2 bg-muted rounded-full overflow-hidden">
           <div
-            className="h-full bg-amber-700 rounded-full transition-all duration-300"
+            className="h-full nh-bg rounded-full transition-all duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -202,7 +202,7 @@ export function AudioWizard({ questions, storyId, onComplete, onBack }: AudioWiz
             <h2 className="text-xl font-semibold">{question.question}</h2>
           </div>
           {!question.is_required && (
-            <p className="text-xs text-amber-700 font-medium mb-1">Optional</p>
+            <p className="text-xs nh-text font-medium mb-1">Optional</p>
           )}
           {question.hint && (
             <p className="text-sm text-muted-foreground">{question.hint}</p>
@@ -241,7 +241,7 @@ export function AudioWizard({ questions, storyId, onComplete, onBack }: AudioWiz
               type="button"
               size="lg"
               onClick={startRecording}
-              className="bg-amber-700 hover:bg-amber-800 rounded-full h-16 w-16"
+              className="nh-bg nh-bg-hover rounded-full h-16 w-16"
             >
               <Mic className="h-6 w-6" />
             </Button>
@@ -282,7 +282,7 @@ export function AudioWizard({ questions, storyId, onComplete, onBack }: AudioWiz
                 size="sm"
                 onClick={uploadAndSave}
                 disabled={uploading}
-                className="bg-amber-700 hover:bg-amber-800"
+                className="nh-bg nh-bg-hover"
               >
                 {uploading ? "Saving..." : "Use This"}
               </Button>
@@ -326,7 +326,7 @@ export function AudioWizard({ questions, storyId, onComplete, onBack }: AudioWiz
           type="button"
           onClick={goNext}
           disabled={recording || uploading}
-          className="bg-amber-700 hover:bg-amber-800"
+          className="nh-bg nh-bg-hover"
         >
           {isLast ? "Review & Submit" : "Next"}
           {!isLast && <ArrowRight className="h-4 w-4 ml-1" />}

@@ -156,7 +156,7 @@ export function StoryEditor({
           </div>
           <div className="flex items-center gap-2">
             {needsTranscript && (
-              <Badge variant="secondary" className="text-amber-700 bg-amber-50">
+              <Badge variant="secondary" className="nh-text nh-bg-light">
                 <AlertTriangle className="h-3 w-3 mr-1" />
                 Needs Transcript
               </Badge>
@@ -175,8 +175,8 @@ export function StoryEditor({
               const existingAnswers = parseAnswersByQuestion(body);
               const answer = existingAnswers[item.question];
               return (
-                <div key={i} className="border-l-2 border-amber-200 pl-5">
-                  <p className="text-sm italic text-amber-700 mb-2">
+                <div key={i} className="border-l-2 nh-border-light pl-5">
+                  <p className="text-sm italic nh-text mb-2">
                     {item.question}
                   </p>
                   <div className="flex items-center gap-2 mb-2">

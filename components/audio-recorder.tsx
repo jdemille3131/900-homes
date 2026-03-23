@@ -152,7 +152,7 @@ export function AudioRecorder({ storyId, onRecorded }: AudioRecorderProps) {
               size="sm"
               onClick={uploadRecording}
               disabled={uploading}
-              className="bg-amber-700 hover:bg-amber-800"
+              className="nh-bg nh-bg-hover"
             >
               {uploading ? "Uploading..." : "Use This"}
             </Button>

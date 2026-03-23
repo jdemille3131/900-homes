@@ -131,7 +131,7 @@ export function AdminActions({ storyId, currentStatus, isFeatured: initialFeatur
             onClick={handleToggleFeature}
             disabled={loading !== null}
             variant={isFeatured ? "default" : "outline"}
-            className={isFeatured ? "bg-amber-600 hover:bg-amber-700" : ""}
+            className={isFeatured ? "nh-bg nh-bg-hover" : ""}
           >
             <Star className={`h-4 w-4 mr-2 ${isFeatured ? "fill-current" : ""}`} />
             {loading === "feature"

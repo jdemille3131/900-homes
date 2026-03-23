@@ -78,7 +78,7 @@ export default function LoginPage() {
           </form>
           <p className="text-sm text-muted-foreground text-center mt-4">
             Don&apos;t have an account?{" "}
-            <Link href={redirect ? `/account/register?redirect=${redirect}` : "/account/register"} className="text-amber-700 hover:underline">
+            <Link href={redirect ? `/account/register?redirect=${redirect}` : "/account/register"} className="nh-text hover:underline">
               Sign up
             </Link>
           </p>

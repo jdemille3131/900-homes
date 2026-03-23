@@ -104,8 +104,8 @@ export function ProfileForm({ profile, userId }: ProfileFormProps) {
       {/* Private Info */}
       <div className="space-y-4">
         <div className="flex items-start gap-3">
-          <div className="p-2 rounded-full bg-amber-50 mt-0.5">
-            <Shield className="h-5 w-5 text-amber-700" />
+          <div className="p-2 rounded-full nh-bg-light mt-0.5">
+            <Shield className="h-5 w-5 nh-text" />
           </div>
           <div>
             <h2 className="text-xl font-semibold">Private Information</h2>
@@ -117,7 +117,7 @@ export function ProfileForm({ profile, userId }: ProfileFormProps) {
           </div>
         </div>
 
-        <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-4 space-y-4">
+        <div className="rounded-lg border nh-border-light nh-bg-light/50 p-4 space-y-4">
           <div className="space-y-2">
             <Label htmlFor="street_address">Street Address</Label>
             <Input
@@ -151,7 +151,7 @@ export function ProfileForm({ profile, userId }: ProfileFormProps) {
         type="submit"
         size="lg"
         disabled={saving}
-        className="w-full bg-amber-700 hover:bg-amber-800"
+        className="w-full nh-bg nh-bg-hover"
       >
         {saving ? "Saving..." : "Save Profile"}
       </Button>

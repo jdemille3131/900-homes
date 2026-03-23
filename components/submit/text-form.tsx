@@ -283,7 +283,7 @@ export function TextForm({
               type="checkbox"
               checked={consentGiven}
               onChange={(e) => setConsentGiven(e.target.checked)}
-              className="mt-1 h-4 w-4 rounded border-gray-300 accent-amber-700"
+              className="mt-1 h-4 w-4 rounded border-gray-300 nh-accent"
               required
             />
             <span className="text-sm font-medium">I agree</span>
@@ -294,7 +294,7 @@ export function TextForm({
           type="submit"
           size="lg"
           disabled={submitting || !consentGiven}
-          className="w-full bg-amber-700 hover:bg-amber-800"
+          className="w-full nh-bg nh-bg-hover"
         >
           {submitting ? "Submitting..." : "Submit Story"}
         </Button>

@@ -63,7 +63,7 @@ function StoryTable({ stories }: { stories: Story[] }) {
             <TableRow key={story.id}>
               <TableCell className="font-medium max-w-[200px] truncate">
                 <span className="flex items-center gap-1.5">
-                  {story.featured_at && <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500 shrink-0" />}
+                  {story.featured_at && <Star className="h-3.5 w-3.5 nh-text fill-[var(--nh-accent)] shrink-0" />}
                   {story.title}
                 </span>
               </TableCell>
@@ -88,7 +88,7 @@ function StoryTable({ stories }: { stories: Story[] }) {
               <TableCell>
                 <Link
                   href={`/admin/stories/${story.id}`}
-                  className="text-sm text-amber-700 hover:underline"
+                  className="text-sm nh-text hover:underline"
                 >
                   Review
                 </Link>

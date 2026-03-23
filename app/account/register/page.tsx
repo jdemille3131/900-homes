@@ -52,8 +52,8 @@ export default function RegisterPage() {
         <Card className="w-full max-w-md text-center">
           <CardHeader>
             <div className="flex justify-center mb-4">
-              <div className="p-4 rounded-full bg-amber-50">
-                <Mail className="h-10 w-10 text-amber-700" />
+              <div className="p-4 rounded-full nh-bg-light">
+                <Mail className="h-10 w-10 nh-text" />
               </div>
             </div>
             <CardTitle className="text-2xl">Check Your Email</CardTitle>
@@ -68,14 +68,14 @@ export default function RegisterPage() {
               Didn&apos;t get it? Check your spam folder, or{" "}
               <button
                 onClick={() => setEmailSent(false)}
-                className="text-amber-700 hover:underline font-medium"
+                className="nh-text hover:underline font-medium"
               >
                 try again
               </button>.
             </p>
             <Link
               href="/account/login"
-              className="inline-block text-sm text-amber-700 hover:underline font-medium"
+              className="inline-block text-sm nh-text hover:underline font-medium"
             >
               Back to Sign In
             </Link>
@@ -134,7 +134,7 @@ export default function RegisterPage() {
           </form>
           <p className="text-sm text-muted-foreground text-center mt-4">
             Already have an account?{" "}
-            <Link href="/account/login" className="text-amber-700 hover:underline">
+            <Link href="/account/login" className="nh-text hover:underline">
               Sign in
             </Link>
           </p>

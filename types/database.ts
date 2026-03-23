@@ -5,6 +5,20 @@ export type StoryType = "life_story" | "specific_event";
 export type SubmissionMode = "text" | "audio";
 export type QuestionStoryType = "life_story" | "specific_event" | "both";
 
+export interface Neighbourhood {
+  id: string;
+  slug: string;
+  name: string;
+  tagline: string | null;
+  description: string | null;
+  accent_color: string;
+  logo_url: string | null;
+  home_count: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Profile {
   id: string;
   email: string;
@@ -15,6 +29,7 @@ export interface Profile {
   move_in_year: number | null;
   street_address: string | null;
   phone: string | null;
+  neighbourhood_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -38,6 +53,7 @@ export interface Story {
   submission_mode: SubmissionMode;
   featured_at: string | null;
   hide_audio: boolean;
+  neighbourhood_id: string | null;
 }
 
 export interface StoryMedia {

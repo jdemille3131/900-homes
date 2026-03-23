@@ -16,8 +16,8 @@ export function StoryBody({ body }: StoryBodyProps) {
           const question = match[1];
           const answer = match[2].trim();
           return (
-            <div key={i} className="border-l-2 border-amber-200 pl-5">
-              <p className="text-sm italic text-amber-700 mb-3">
+            <div key={i} className="border-l-2 nh-border-light pl-5">
+              <p className="text-sm italic nh-text mb-3">
                 {question}
               </p>
               <div className="text-lg leading-relaxed">

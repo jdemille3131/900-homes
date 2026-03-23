@@ -221,7 +221,7 @@ export function QuestionsList({ questions: initial }: QuestionsListProps) {
                   )}
                   <div className="flex items-center gap-2 ml-6 mt-1">
                     {q.is_required ? (
-                      <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100 text-xs">Core</Badge>
+                      <Badge className="nh-bg-100 nh-text-dark hover:nh-bg-100 text-xs">Core</Badge>
                     ) : (
                       <Badge variant="outline" className="text-xs">Optional</Badge>
                     )}
@@ -238,7 +238,7 @@ export function QuestionsList({ questions: initial }: QuestionsListProps) {
                     disabled={loading}
                     title={q.is_required ? "Make optional" : "Make core"}
                   >
-                    <Star className={`h-4 w-4 ${q.is_required ? "fill-amber-500 text-amber-500" : ""}`} />
+                    <Star className={`h-4 w-4 ${q.is_required ? "fill-[var(--nh-accent)] nh-text" : ""}`} />
                   </Button>
                   <Button
                     variant="ghost"
@@ -303,7 +303,7 @@ export function QuestionsList({ questions: initial }: QuestionsListProps) {
                 type="checkbox"
                 checked={newIsRequired}
                 onChange={(e) => setNewIsRequired(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 accent-amber-700"
+                className="h-4 w-4 rounded border-gray-300 nh-accent"
               />
               <span className="text-sm font-medium">Core question</span>
               <span className="text-xs text-muted-foreground">(uncheck for optional)</span>

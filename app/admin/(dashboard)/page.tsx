@@ -28,8 +28,8 @@ export default async function AdminDashboard() {
       label: "Pending Review",
       count: pendingCount || 0,
       icon: Clock,
-      color: "text-amber-600",
-      bgColor: "bg-amber-50",
+      color: "nh-text",
+      bgColor: "nh-bg-light",
     },
     {
       label: "Approved",
@@ -79,7 +79,7 @@ export default async function AdminDashboard() {
       {(pendingCount || 0) > 0 && (
         <Link
           href="/admin/stories"
-          className="inline-flex items-center gap-2 text-amber-700 hover:underline font-medium"
+          className="inline-flex items-center gap-2 nh-text hover:underline font-medium"
         >
           <Clock className="h-4 w-4" />
           Review {pendingCount} pending {pendingCount === 1 ? "story" : "stories"}

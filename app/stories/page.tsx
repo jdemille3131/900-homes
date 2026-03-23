@@ -88,7 +88,7 @@ export default async function StoriesPage({ searchParams }: Props) {
           />
           <button
             type="submit"
-            className="px-4 py-2 bg-amber-700 text-white rounded-md hover:bg-amber-800 text-sm"
+            className="px-4 py-2 nh-bg text-white rounded-md nh-bg-hover text-sm"
           >
             Search
           </button>
@@ -151,7 +151,7 @@ export default async function StoriesPage({ searchParams }: Props) {
           </p>
           <Link
             href="/submit"
-            className="text-amber-700 hover:underline mt-2 inline-block"
+            className="nh-text hover:underline mt-2 inline-block"
           >
             Share a story
           </Link>

@@ -116,6 +116,14 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+:root {
+  --nh-accent: #b45309;
+  --nh-accent-hover: #92400e;
+  --nh-accent-light: #fffbeb;
+  --nh-accent-bg: #fef3c7;
+  --nh-accent-text: #92400e;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -127,3 +135,14 @@
     @apply font-sans;
   }
 }
+
+/* Neighbourhood-themed utility classes */
+.nh-bg { background-color: var(--nh-accent); }
+.nh-bg-hover:hover { background-color: var(--nh-accent-hover); }
+.nh-bg-light { background-color: var(--nh-accent-light); }
+.nh-bg-100 { background-color: var(--nh-accent-bg); }
+.nh-text { color: var(--nh-accent); }
+.nh-text-dark { color: var(--nh-accent-text); }
+.nh-border { border-color: var(--nh-accent); }
+.nh-border-light { border-color: var(--nh-accent-bg); }
+.nh-accent { accent-color: var(--nh-accent); }

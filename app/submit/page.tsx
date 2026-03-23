@@ -97,9 +97,9 @@ export default function SubmitPage() {
           <div className="grid sm:grid-cols-2 gap-4">
             <Link
               href="/account/register?redirect=/submit"
-              className="flex flex-col items-center gap-3 p-8 border rounded-lg hover:border-amber-600 hover:shadow-md transition-all text-center"
+              className="flex flex-col items-center gap-3 p-8 border rounded-lg hover:nh-border hover:shadow-md transition-all text-center"
             >
-              <UserPlus className="h-10 w-10 text-amber-700" />
+              <UserPlus className="h-10 w-10 nh-text" />
               <span className="text-lg font-semibold">Create an Account</span>
               <span className="text-sm text-muted-foreground">
                 Sign up to submit and track your stories
@@ -107,9 +107,9 @@ export default function SubmitPage() {
             </Link>
             <Link
               href="/account/login?redirect=/submit"
-              className="flex flex-col items-center gap-3 p-8 border rounded-lg hover:border-amber-600 hover:shadow-md transition-all text-center"
+              className="flex flex-col items-center gap-3 p-8 border rounded-lg hover:nh-border hover:shadow-md transition-all text-center"
             >
-              <LogIn className="h-10 w-10 text-amber-700" />
+              <LogIn className="h-10 w-10 nh-text" />
               <span className="text-lg font-semibold">Sign In</span>
               <span className="text-sm text-muted-foreground">
                 Already have an account? Welcome back

@@ -21,7 +21,7 @@ export default async function FaqPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-3xl">
       <div className="text-center mb-12">
-        <HelpCircle className="h-12 w-12 text-amber-700 mx-auto mb-4" />
+        <HelpCircle className="h-12 w-12 nh-text mx-auto mb-4" />
         <h1 className="text-3xl font-bold mb-2">Frequently Asked Questions</h1>
         <p className="text-muted-foreground">
           Everything you need to know about sharing your story with 900 Homes.
@@ -41,14 +41,14 @@ export default async function FaqPage() {
         <p className="text-center text-muted-foreground">No FAQs yet. Check back soon!</p>
       )}
 
-      <div className="mt-12 text-center p-6 bg-amber-50 rounded-lg">
+      <div className="mt-12 text-center p-6 nh-bg-light rounded-lg">
         <p className="font-medium mb-2">Still have questions?</p>
         <p className="text-sm text-muted-foreground mb-4">
           We&apos;d love to hear from you. Reach out or just go ahead and share your story.
         </p>
         <Link
           href="/submit"
-          className="inline-flex items-center justify-center h-10 px-6 rounded-lg bg-amber-700 text-white font-medium hover:bg-amber-800 transition-colors"
+          className="inline-flex items-center justify-center h-10 px-6 rounded-lg nh-bg text-white font-medium nh-bg-hover transition-colors"
         >
           Share Your Story
         </Link>

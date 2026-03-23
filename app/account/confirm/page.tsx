@@ -34,7 +34,7 @@ export default function ConfirmPage() {
     return (
       <div className="container mx-auto px-4 py-24 flex justify-center">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-amber-700 mx-auto mb-4" />
+          <Loader2 className="h-8 w-8 animate-spin nh-text mx-auto mb-4" />
           <p className="text-muted-foreground">Confirming your email...</p>
         </div>
       </div>
@@ -52,7 +52,7 @@ export default function ConfirmPage() {
           <CardContent className="space-y-3">
             <Link
               href="/account/register"
-              className="inline-block text-sm text-amber-700 hover:underline font-medium"
+              className="inline-block text-sm nh-text hover:underline font-medium"
             >
               Try signing up again
             </Link>
@@ -79,14 +79,14 @@ export default function ConfirmPage() {
         <CardContent className="space-y-3">
           <Link
             href="/account/profile"
-            className="inline-flex items-center justify-center h-10 px-6 rounded-lg bg-amber-700 text-white font-medium hover:bg-amber-800 transition-colors"
+            className="inline-flex items-center justify-center h-10 px-6 rounded-lg nh-bg text-white font-medium nh-bg-hover transition-colors"
           >
             Set Up Your Profile
           </Link>
           <div>
             <Link
               href="/submit"
-              className="inline-block text-sm text-amber-700 hover:underline font-medium"
+              className="inline-block text-sm nh-text hover:underline font-medium"
             >
               Or share your first story
             </Link>

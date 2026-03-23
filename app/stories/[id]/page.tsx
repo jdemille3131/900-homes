@@ -129,7 +129,7 @@ export default async function StoryDetailPage({ params }: Props) {
         <header className="mb-8">
           <div className="flex items-center gap-3 mb-4">
             {isLifeStory ? (
-              <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">
+              <Badge className="nh-bg-100 nh-text-dark hover:nh-bg-100">
                 <BookOpen className="h-3 w-3 mr-1" />
                 Life Story
               </Badge>
@@ -153,7 +153,7 @@ export default async function StoryDetailPage({ params }: Props) {
             </span>
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-3">{typedStory.title}</h1>
-          <p className="text-lg text-amber-800 font-medium">
+          <p className="text-lg nh-text-dark font-medium">
             {typedStory.contributor_name}
           </p>
           {!isAudio && answeredCount > 0 && (
@@ -235,7 +235,7 @@ export default async function StoryDetailPage({ params }: Props) {
             <p className="text-muted-foreground mb-3">Inspired?</p>
             <Link
               href="/submit"
-              className="inline-flex items-center justify-center h-10 px-6 rounded-lg bg-amber-700 text-white font-medium hover:bg-amber-800 transition-colors"
+              className="inline-flex items-center justify-center h-10 px-6 rounded-lg nh-bg text-white font-medium nh-bg-hover transition-colors"
             >
               Share Your Own Story
             </Link>

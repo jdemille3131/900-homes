@@ -132,8 +132,8 @@ export function MediaUploader({ storyId, onMediaChange, media }: MediaUploaderPr
         {...getRootProps()}
         className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
           isDragActive
-            ? "border-amber-500 bg-amber-50"
-            : "border-muted-foreground/25 hover:border-amber-400"
+            ? "nh-border nh-bg-light"
+            : "border-muted-foreground/25 hover:nh-border"
         }`}
       >
         <input {...getInputProps()} />
@@ -154,7 +154,7 @@ export function MediaUploader({ storyId, onMediaChange, media }: MediaUploaderPr
           <span className="truncate flex-1">{name}</span>
           <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
             <div
-              className="h-full bg-amber-600 transition-all"
+              className="h-full nh-bg transition-all"
               style={{ width: `${pct}%` }}
             />
           </div>

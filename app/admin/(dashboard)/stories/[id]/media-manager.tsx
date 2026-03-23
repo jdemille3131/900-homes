@@ -156,7 +156,7 @@ export function MediaManager({ storyId, initialMedia }: MediaManagerProps) {
             <Button
               onClick={handleSaveNew}
               disabled={saving}
-              className="bg-amber-700 hover:bg-amber-800"
+              className="nh-bg nh-bg-hover"
             >
               {saving ? "Saving..." : `Save ${newMedia.length} file${newMedia.length !== 1 ? "s" : ""}`}
             </Button>
