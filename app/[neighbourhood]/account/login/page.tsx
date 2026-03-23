@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useNeighbourhood } from "@/components/neighbourhood-context";
 
 export default function LoginPage() {
+  const { href } = useNeighbourhood();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect");
   const [error, setError] = useState("");
@@ -36,7 +38,7 @@ export default function LoginPage() {
       return;
     }
 
-    window.location.href = redirect || "/account/stories";
+    window.location.href = redirect || href("/account/stories");
   }
 
   return (
@@ -78,7 +80,7 @@ export default function LoginPage() {
           </form>
           <p className="text-sm text-muted-foreground text-center mt-4">
             Don&apos;t have an account?{" "}
-            <Link href={redirect ? `/account/register?redirect=${redirect}` : "/account/register"} className="nh-text hover:underline">
+            <Link href={redirect ? href(`/account/register?redirect=${redirect}`) : href("/account/register")} className="nh-text hover:underline">
               Sign up
             </Link>
           </p>

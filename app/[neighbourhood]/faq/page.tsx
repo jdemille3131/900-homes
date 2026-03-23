@@ -9,7 +9,13 @@ export const metadata = {
   title: "FAQ — 900 Homes",
 };
 
-export default async function FaqPage() {
+interface Props {
+  params: Promise<{ neighbourhood: string }>;
+}
+
+export default async function FaqPage({ params }: Props) {
+  const { neighbourhood: slug } = await params;
+  const prefix = `/${slug}`;
   const supabase = await createClient();
 
   const { data: faqs } = await supabase
@@ -47,7 +53,7 @@ export default async function FaqPage() {
           We&apos;d love to hear from you. Reach out or just go ahead and share your story.
         </p>
         <Link
-          href="/submit"
+          href={`${prefix}/submit`}
           className="inline-flex items-center justify-center h-10 px-6 rounded-lg nh-bg text-white font-medium nh-bg-hover transition-colors"
         >
           Share Your Story

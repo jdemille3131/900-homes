@@ -5,8 +5,10 @@ import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { CheckCircle, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useNeighbourhood } from "@/components/neighbourhood-context";
 
 export default function ConfirmPage() {
+  const { href } = useNeighbourhood();
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -51,7 +53,7 @@ export default function ConfirmPage() {
           </CardHeader>
           <CardContent className="space-y-3">
             <Link
-              href="/account/register"
+              href={href("/account/register")}
               className="inline-block text-sm nh-text hover:underline font-medium"
             >
               Try signing up again
@@ -78,14 +80,14 @@ export default function ConfirmPage() {
         </CardHeader>
         <CardContent className="space-y-3">
           <Link
-            href="/account/profile"
+            href={href("/account/profile")}
             className="inline-flex items-center justify-center h-10 px-6 rounded-lg nh-bg text-white font-medium nh-bg-hover transition-colors"
           >
             Set Up Your Profile
           </Link>
           <div>
             <Link
-              href="/submit"
+              href={href("/submit")}
               className="inline-block text-sm nh-text hover:underline font-medium"
             >
               Or share your first story

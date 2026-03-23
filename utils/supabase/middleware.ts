@@ -35,19 +35,11 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protect account routes (require login, any role)
-  const protectedAccountPaths = ["/account/stories", "/account/profile"];
-  if (protectedAccountPaths.some((p) => request.nextUrl.pathname.startsWith(p))) {
-    if (!user) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/account/login";
-      return NextResponse.redirect(url);
-    }
-  }
+  const pathname = request.nextUrl.pathname;
 
-  // Protect admin routes
-  if (request.nextUrl.pathname.startsWith("/admin")) {
-    if (request.nextUrl.pathname === "/admin/login") {
+  // ---- Admin routes ----
+  if (pathname.startsWith("/admin")) {
+    if (pathname === "/admin/login") {
       return supabaseResponse;
     }
 
@@ -57,7 +49,6 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    // Check admin role using service client to bypass RLS
     const serviceClient = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -73,6 +64,61 @@ export async function updateSession(request: NextRequest) {
       const url = request.nextUrl.clone();
       url.pathname = "/admin/login";
       return NextResponse.redirect(url);
+    }
+
+    return supabaseResponse;
+  }
+
+  // ---- Neighbourhood routes ----
+  // Pattern: /[slug]/... where slug is not a known root route
+  const knownRootRoutes = ["admin", "api", "_next", "favicon.ico"];
+  const segments = pathname.split("/").filter(Boolean);
+  const firstSegment = segments[0];
+
+  if (firstSegment && !knownRootRoutes.includes(firstSegment)) {
+    // This looks like a neighbourhood route: /[neighbourhood]/...
+    const neighbourhoodSlug = firstSegment;
+    const subPath = "/" + segments.slice(1).join("/");
+
+    // Public neighbourhood pages (no auth required): login, register, confirm, and the homepage
+    const publicPaths = ["/account/login", "/account/register", "/account/confirm", ""];
+    const isPublicPath = publicPaths.includes(subPath) || subPath === "/";
+
+    if (!isPublicPath) {
+      // Require login for all other neighbourhood pages
+      if (!user) {
+        const url = request.nextUrl.clone();
+        url.pathname = `/${neighbourhoodSlug}/account/login`;
+        return NextResponse.redirect(url);
+      }
+
+      // Verify user belongs to this neighbourhood (skip for admins)
+      const serviceClient = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+
+      const { data: profile } = await serviceClient
+        .from("profiles")
+        .select("role, neighbourhood_id")
+        .eq("id", user.id)
+        .single();
+
+      if (profile && profile.role !== "admin" && profile.neighbourhood_id) {
+        // Look up the neighbourhood slug for the user's neighbourhood
+        const { data: userNeighbourhood } = await serviceClient
+          .from("neighbourhoods")
+          .select("slug")
+          .eq("id", profile.neighbourhood_id)
+          .single();
+
+        if (userNeighbourhood && userNeighbourhood.slug !== neighbourhoodSlug) {
+          // Redirect to user's own neighbourhood
+          const url = request.nextUrl.clone();
+          url.pathname = `/${userNeighbourhood.slug}${subPath}`;
+          return NextResponse.redirect(url);
+        }
+      }
     }
   }
 

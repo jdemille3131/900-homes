@@ -29,12 +29,18 @@ export const metadata = {
   title: "My Stories",
 };
 
-export default async function MyStoriesPage() {
+interface Props {
+  params: Promise<{ neighbourhood: string }>;
+}
+
+export default async function MyStoriesPage({ params }: Props) {
+  const { neighbourhood: slug } = await params;
+  const prefix = `/${slug}`;
   const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login");
+    redirect(`${prefix}/account/login`);
   }
 
   const { data: profile } = await supabase
@@ -62,7 +68,7 @@ export default async function MyStoriesPage() {
           </p>
         </div>
         <Link
-          href="/submit"
+          href={`${prefix}/submit`}
           className="inline-flex items-center justify-center h-10 px-6 rounded-lg nh-bg text-white font-medium nh-bg-hover transition-colors"
         >
           <PenLine className="h-4 w-4 mr-2" />
@@ -116,7 +122,7 @@ export default async function MyStoriesPage() {
                     </span>
                     {story.status === "approved" && (
                       <Link
-                        href={`/stories/${story.id}`}
+                        href={`${prefix}/stories/${story.id}`}
                         className="flex items-center gap-1 nh-text hover:underline"
                       >
                         <Eye className="h-3 w-3" />
@@ -145,7 +151,7 @@ export default async function MyStoriesPage() {
             You haven&apos;t submitted any stories yet.
           </p>
           <Link
-            href="/submit"
+            href={`${prefix}/submit`}
             className="nh-text hover:underline font-medium"
           >
             Share your first story

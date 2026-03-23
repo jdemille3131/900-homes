@@ -8,8 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Mail } from "lucide-react";
+import { useNeighbourhood } from "@/components/neighbourhood-context";
 
 export default function RegisterPage() {
+  const { neighbourhood, href } = useNeighbourhood();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
@@ -30,8 +32,8 @@ export default function RegisterPage() {
       email,
       password,
       options: {
-        data: { display_name: displayName },
-        emailRedirectTo: `${window.location.origin}/account/confirm`,
+        data: { display_name: displayName, neighbourhood_id: neighbourhood.id },
+        emailRedirectTo: `${window.location.origin}${href("/account/confirm")}`,
       },
     });
 
@@ -74,7 +76,7 @@ export default function RegisterPage() {
               </button>.
             </p>
             <Link
-              href="login"
+              href={href("/account/login")}
               className="inline-block text-sm nh-text hover:underline font-medium"
             >
               Back to Sign In
