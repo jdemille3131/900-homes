@@ -26,6 +26,7 @@ import {
   ExternalLink,
   Upload,
   Trash2,
+  Compass,
 } from "lucide-react";
 import type { Neighbourhood } from "@/types/database";
 
@@ -47,6 +48,7 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
     city: "",
     county: "",
     state: "",
+    discover_enabled: true,
   });
   const [showAdd, setShowAdd] = useState(false);
   const [newData, setNewData] = useState({
@@ -101,6 +103,22 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
     setUploading(false);
   }
 
+  async function handleToggleDiscover(nh: Neighbourhood) {
+    setLoading(true);
+    const result = await updateNeighbourhood(nh.id, { discover_enabled: !nh.discover_enabled });
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      setNeighbourhoods((prev) =>
+        prev.map((item) =>
+          item.id === nh.id ? { ...item, discover_enabled: !nh.discover_enabled } : item
+        )
+      );
+      toast.success(nh.discover_enabled ? "Discover disabled." : "Discover enabled.");
+    }
+    setLoading(false);
+  }
+
   async function handleRemoveImage(neighbourhoodId: string) {
     setLoading(true);
     const result = await updateNeighbourhood(neighbourhoodId, { logo_url: "" });
@@ -128,6 +146,7 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
       city: nh.city || "",
       county: nh.county || "",
       state: nh.state || "",
+      discover_enabled: nh.discover_enabled,
     });
   }
 
@@ -144,6 +163,7 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
       city: editData.city || undefined,
       county: editData.county || undefined,
       state: editData.state || undefined,
+      discover_enabled: editData.discover_enabled,
     });
     if (result.error) {
       toast.error(result.error);
@@ -412,6 +432,15 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
                   >
                     <ExternalLink className="h-4 w-4" />
                   </a>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleToggleDiscover(nh)}
+                    disabled={loading}
+                    title={nh.discover_enabled ? "Disable Discover" : "Enable Discover"}
+                  >
+                    <Compass className={`h-4 w-4 ${nh.discover_enabled ? "nh-text" : "text-muted-foreground/40"}`} />
+                  </Button>
                   <Button
                     variant="ghost"
                     size="sm"

@@ -58,6 +58,7 @@ export async function updateNeighbourhood(
     city?: string;
     county?: string;
     state?: string;
+    discover_enabled?: boolean;
     is_active?: boolean;
   }
 ) {

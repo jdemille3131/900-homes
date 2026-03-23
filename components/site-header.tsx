@@ -45,7 +45,7 @@ export function SiteHeader({ neighbourhood }: SiteHeaderProps) {
     ? [
         { href: `${prefix}`, label: "Home" },
         { href: `${prefix}/stories`, label: "Stories" },
-        { href: `${prefix}/discover`, label: "Discover" },
+        ...(neighbourhood.discover_enabled ? [{ href: `${prefix}/discover`, label: "Discover" }] : []),
         { href: `${prefix}/submit`, label: "Share Your Story" },
         { href: `${prefix}/faq`, label: "FAQ" },
       ]

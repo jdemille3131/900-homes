@@ -18,6 +18,7 @@ export interface Neighbourhood {
   city: string | null;
   county: string | null;
   state: string | null;
+  discover_enabled: boolean;
   is_active: boolean;
   created_at: string;
   updated_at: string;

@@ -21,6 +21,7 @@ export default async function DiscoverPage({ params, searchParams }: Props) {
   const { scope = "city" } = await searchParams;
   const neighbourhood = await getNeighbourhoodBySlug(slug);
   if (!neighbourhood) notFound();
+  if (!neighbourhood.discover_enabled) notFound();
 
   const prefix = `/${slug}`;
   const supabase = await createClient();
