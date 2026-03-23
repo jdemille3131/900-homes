@@ -3,7 +3,7 @@
 import { createServiceClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
-export async function createQuestion(question: string, hint?: string) {
+export async function createQuestion(question: string, hint?: string, isRequired: boolean = true) {
   const supabase = createServiceClient();
 
   // Get max sort_order
@@ -17,7 +17,7 @@ export async function createQuestion(question: string, hint?: string) {
 
   const { error } = await supabase
     .from("questions")
-    .insert({ question, hint: hint || null, sort_order: nextOrder });
+    .insert({ question, hint: hint || null, sort_order: nextOrder, is_required: isRequired });
 
   if (error) return { error: error.message };
 
@@ -28,7 +28,7 @@ export async function createQuestion(question: string, hint?: string) {
 
 export async function updateQuestion(
   id: string,
-  data: { question?: string; hint?: string; is_active?: boolean; sort_order?: number }
+  data: { question?: string; hint?: string; is_active?: boolean; is_required?: boolean; sort_order?: number }
 ) {
   const supabase = createServiceClient();
 

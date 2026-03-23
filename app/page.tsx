@@ -58,9 +58,9 @@ export default async function HomePage() {
             Raintree Village, Katy TX
           </h2>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
-            1,700 homes.
+            Over 900 homes.
             <br />
-            <span className="text-amber-700">1,700 stories waiting to be told.</span>
+            <span className="text-amber-700">Over 900 stories waiting to be told.</span>
           </h1>
           <p className="mx-auto max-w-2xl text-lg md:text-xl text-muted-foreground mb-10">
             Behind every door in Raintree Village is a lifetime of memories.

@@ -66,6 +66,7 @@ export default async function StoryDetailPage({ params }: Props) {
   const mediaItems = typedStory.story_media || [];
   const sortedMedia = mediaItems.sort((a, b) => a.sort_order - b.sort_order);
   const isAudio = typedStory.submission_mode === "audio";
+  const hideAudio = !!typedStory.hide_audio;
   const isLifeStory = typedStory.story_type === "life_story";
 
   // For audio stories, fetch the questions linked to media
@@ -138,7 +139,7 @@ export default async function StoryDetailPage({ params }: Props) {
                 A Moment
               </Badge>
             )}
-            {isAudio && (
+            {isAudio && !hideAudio && (
               <Badge variant="outline">
                 <Mic className="h-3 w-3 mr-1" />
                 Audio Story
@@ -162,35 +163,63 @@ export default async function StoryDetailPage({ params }: Props) {
           )}
         </header>
 
-        {/* Audio story: question-linked player */}
-        {isAudio && audioQuestions.length > 0 ? (
+        {/* Non-audio media (images, videos) — shown for text stories and hidden-audio stories */}
+        {(!isAudio || hideAudio) && nonAudioMedia.length > 0 && (
+          <div className="space-y-4 mb-8">
+            {nonAudioMedia.map((m) => {
+              const bucket = BUCKET_MAP[m.media_type];
+              const { data: { publicUrl } } = supabase.storage
+                .from(bucket)
+                .getPublicUrl(m.storage_path);
+              return (
+                <MediaPlayer key={m.id} media={m} publicUrl={publicUrl} />
+              );
+            })}
+          </div>
+        )}
+
+        {/* Audio story with audio visible: show player */}
+        {isAudio && !hideAudio && audioQuestions.length > 0 && (
           <AudioStoryPlayer
             questions={audioQuestions}
             media={sortedMedia}
             supabaseUrl={process.env.NEXT_PUBLIC_SUPABASE_URL || ""}
           />
-        ) : (
-          <>
-            {/* Non-audio media (images, videos) */}
-            {nonAudioMedia.length > 0 && (
-              <div className="space-y-4 mb-8">
-                {nonAudioMedia.map((m) => {
-                  const bucket = BUCKET_MAP[m.media_type];
-                  const { data: { publicUrl } } = supabase.storage
-                    .from(bucket)
-                    .getPublicUrl(m.storage_path);
-
-                  return (
-                    <MediaPlayer key={m.id} media={m} publicUrl={publicUrl} />
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Story body */}
-            <StoryBody body={typedStory.body} />
-          </>
         )}
+
+        {/* Transcript / story body */}
+        {(() => {
+          const hasTranscript = typedStory.body && !typedStory.body
+            .split("\n")
+            .every((line: string) =>
+              line.trim() === "" ||
+              /^\*\*.+\*\*$/.test(line.trim()) ||
+              line.trim() === "[Audio response]"
+            );
+
+          if (isAudio && hideAudio && hasTranscript) {
+            // Hidden audio mode: show transcript as regular text story
+            return <StoryBody body={typedStory.body} />;
+          }
+
+          if (isAudio && !hideAudio && hasTranscript) {
+            // Audio visible + transcript exists: show both
+            return (
+              <div className="mt-10 pt-8 border-t">
+                <h2 className="text-xl font-semibold mb-6">Transcript</h2>
+                <StoryBody body={typedStory.body} />
+              </div>
+            );
+          }
+
+          if (!isAudio) {
+            // Regular text story
+            return <StoryBody body={typedStory.body} />;
+          }
+
+          // Audio-only, no transcript — nothing more to show
+          return null;
+        })()}
       </article>
 
       {/* Related stories */}

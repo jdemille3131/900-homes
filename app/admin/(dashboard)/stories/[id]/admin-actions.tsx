@@ -6,21 +6,24 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { approveStory, rejectStory, deleteStory, toggleFeatureStory } from "@/app/actions/stories";
+import { approveStory, rejectStory, deleteStory, toggleFeatureStory, toggleHideAudio } from "@/app/actions/stories";
 import { toast } from "sonner";
-import { CheckCircle, XCircle, Trash2, Star } from "lucide-react";
+import { CheckCircle, XCircle, Trash2, Star, EyeOff, Eye } from "lucide-react";
 
 interface AdminActionsProps {
   storyId: string;
   currentStatus: string;
   isFeatured: boolean;
+  isAudio?: boolean;
+  hideAudio?: boolean;
 }
 
-export function AdminActions({ storyId, currentStatus, isFeatured: initialFeatured }: AdminActionsProps) {
+export function AdminActions({ storyId, currentStatus, isFeatured: initialFeatured, isAudio, hideAudio: initialHideAudio }: AdminActionsProps) {
   const router = useRouter();
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState<string | null>(null);
   const [isFeatured, setIsFeatured] = useState(initialFeatured);
+  const [hideAudio, setHideAudio] = useState(initialHideAudio ?? false);
 
   async function handleApprove() {
     setLoading("approve");
@@ -54,6 +57,18 @@ export function AdminActions({ storyId, currentStatus, isFeatured: initialFeatur
     } else {
       setIsFeatured(!!result.featured);
       toast.success(result.featured ? "Story featured!" : "Story unfeatured.");
+    }
+    setLoading(null);
+  }
+
+  async function handleToggleHideAudio() {
+    setLoading("hideAudio");
+    const result = await toggleHideAudio(storyId);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      setHideAudio(!!result.hideAudio);
+      toast.success(result.hideAudio ? "Audio hidden from public." : "Audio visible to public.");
     }
     setLoading(null);
   }
@@ -124,6 +139,26 @@ export function AdminActions({ storyId, currentStatus, isFeatured: initialFeatur
               : isFeatured
                 ? "Featured"
                 : "Feature This Story"}
+          </Button>
+        )}
+
+        {isAudio && (
+          <Button
+            onClick={handleToggleHideAudio}
+            disabled={loading !== null}
+            variant={hideAudio ? "default" : "outline"}
+            className={hideAudio ? "bg-slate-600 hover:bg-slate-700" : ""}
+          >
+            {hideAudio ? (
+              <EyeOff className="h-4 w-4 mr-2" />
+            ) : (
+              <Eye className="h-4 w-4 mr-2" />
+            )}
+            {loading === "hideAudio"
+              ? "Updating..."
+              : hideAudio
+                ? "Audio Hidden from Public"
+                : "Hide Audio from Public"}
           </Button>
         )}
       </div>

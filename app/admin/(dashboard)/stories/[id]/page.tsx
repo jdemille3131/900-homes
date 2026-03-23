@@ -3,12 +3,14 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { MediaPlayer } from "@/components/media-player";
 import { StoryBody } from "@/components/story-body";
-import { MapPin, Clock, ArrowLeft, User, Mic } from "lucide-react";
+import { MapPin, Clock, ArrowLeft, User, Mic, Download } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import { AdminActions } from "./admin-actions";
 import { StoryEditor } from "./story-editor";
+import { MediaManager } from "./media-manager";
 import type { StoryMedia, StoryStatus, Profile, Question } from "@/types/database";
+import type { AudioContextItem } from "./story-editor";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -170,9 +172,19 @@ export default async function AdminStoryReviewPage({ params }: Props) {
                         {question.question}
                       </p>
                     )}
-                    <audio controls className="w-full h-10" preload="metadata">
-                      <source src={publicUrl} type={m.mime_type || "audio/webm"} />
-                    </audio>
+                    <div className="flex items-center gap-2">
+                      <audio controls className="flex-1 h-10" preload="metadata">
+                        <source src={publicUrl} type={m.mime_type || "audio/webm"} />
+                      </audio>
+                      <a
+                        href={publicUrl}
+                        download={m.file_name || `recording-${i + 1}.webm`}
+                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground shrink-0"
+                      >
+                        <Download className="h-3 w-3" />
+                        Download
+                      </a>
+                    </div>
                   </div>
                 );
               })}
@@ -213,7 +225,34 @@ export default async function AdminStoryReviewPage({ params }: Props) {
           initialTitle={story.title}
           initialContributorName={story.contributor_name}
           initialBody={story.body}
+          audioContext={isAudio ? sortedMedia
+            .filter((m) => m.media_type === "audio" && m.question_id)
+            .map((m) => {
+              const { data: { publicUrl } } = supabase.storage
+                .from("story-audio")
+                .getPublicUrl(m.storage_path);
+              const question = m.question_id ? questionsMap[m.question_id] : null;
+              return {
+                question: question?.question || "Unknown question",
+                audioUrl: publicUrl,
+                fileName: m.file_name || `recording-${m.id}.webm`,
+              } satisfies AudioContextItem;
+            }) : undefined}
         />
+
+        {/* Media Manager */}
+        <div className="mt-6">
+          <MediaManager
+            storyId={story.id}
+            initialMedia={sortedMedia.map((m) => {
+              const bucket = BUCKET_MAP[m.media_type];
+              const { data: { publicUrl } } = supabase.storage
+                .from(bucket)
+                .getPublicUrl(m.storage_path);
+              return { item: m, publicUrl };
+            })}
+          />
+        </div>
 
         {story.admin_notes && (
           <div className="mt-6 p-4 bg-muted/50 rounded-lg">
@@ -223,7 +262,7 @@ export default async function AdminStoryReviewPage({ params }: Props) {
         )}
       </article>
 
-      <AdminActions storyId={story.id} currentStatus={story.status} isFeatured={!!story.featured_at} />
+      <AdminActions storyId={story.id} currentStatus={story.status} isFeatured={!!story.featured_at} isAudio={isAudio} hideAudio={!!story.hide_audio} />
     </div>
   );
 }

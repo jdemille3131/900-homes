@@ -35,6 +35,8 @@ export function AudioReview({
   const [submitting, setSubmitting] = useState(false);
   const [extraMedia, setExtraMedia] = useState<UploadedMedia[]>([]);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
+  const [consentGiven, setConsentGiven] = useState(false);
+  const [hideAudio, setHideAudio] = useState(false);
 
   const handleExtraMedia = useCallback((media: UploadedMedia[]) => {
     setExtraMedia(media);
@@ -91,6 +93,7 @@ export function AudioReview({
       neighbourhood: formData.get("neighbourhood") as string,
       story_type: storyType,
       submission_mode: "audio",
+      hide_audio: hideAudio,
       answers: {},
       media: [...audioMedia, ...otherMedia],
     });
@@ -222,10 +225,55 @@ export function AudioReview({
           <p className="text-sm text-destructive">{errors._form[0]}</p>
         )}
 
+        <Separator />
+
+        {/* Audio Privacy */}
+        <div className="space-y-3">
+          <h3 className="font-semibold">Audio Privacy</h3>
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={hideAudio}
+              onChange={(e) => setHideAudio(e.target.checked)}
+              className="mt-1 h-4 w-4 rounded border-gray-300 accent-amber-700"
+            />
+            <div>
+              <span className="text-sm font-medium">Keep my audio private</span>
+              <p className="text-xs text-muted-foreground mt-1">
+                Only the written transcript will be shared publicly. Your audio recordings will only be accessible to moderators.
+              </p>
+            </div>
+          </label>
+        </div>
+
+        <Separator />
+
+        {/* Consent & Release */}
+        <div className="space-y-3">
+          <h3 className="font-semibold">Consent &amp; Release</h3>
+          <p className="text-sm text-muted-foreground">
+            By submitting my story, I give permission for it to be recorded, edited, and shared
+            as part of the 900 Homes project, including on websites and social media.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            I understand I can choose to remain anonymous and may request my story be removed at any time.
+          </p>
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={consentGiven}
+              onChange={(e) => setConsentGiven(e.target.checked)}
+              className="mt-1 h-4 w-4 rounded border-gray-300 accent-amber-700"
+              required
+            />
+            <span className="text-sm font-medium">I agree</span>
+          </label>
+        </div>
+
         <Button
           type="submit"
           size="lg"
-          disabled={submitting}
+          disabled={submitting || !consentGiven}
           className="w-full bg-amber-700 hover:bg-amber-800"
         >
           {submitting ? "Submitting..." : "Submit Story"}

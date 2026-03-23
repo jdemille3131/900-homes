@@ -49,10 +49,13 @@ export default function SubmitPage() {
       });
   }, []);
 
-  // Filter questions based on selected story type
-  const filteredQuestions = allQuestions.filter(
-    (q) => q.story_type === storyType || q.story_type === "both"
-  );
+  // Filter questions based on selected story type, core first then optional
+  const filteredQuestions = allQuestions
+    .filter((q) => q.story_type === storyType || q.story_type === "both")
+    .sort((a, b) => {
+      if (a.is_required !== b.is_required) return a.is_required ? -1 : 1;
+      return a.sort_order - b.sort_order;
+    });
 
   function handleSelectType(type: StoryType) {
     setStoryType(type);

@@ -36,6 +36,7 @@ export function TextForm({
   const [media, setMedia] = useState<UploadedMedia[]>([]);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [consentGiven, setConsentGiven] = useState(false);
 
   const handleRecorded = useCallback((recorded: UploadedMedia) => {
     setMedia((prev) => [...prev, recorded]);
@@ -167,35 +168,82 @@ export function TextForm({
         <Separator />
 
         {/* Guided questions */}
-        {questions.length > 0 && (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-xl font-semibold mb-1">Your Story</h2>
-              <p className="text-sm text-muted-foreground">
-                Answer the questions that speak to you. Skip any that don&apos;t.
-              </p>
-            </div>
+        {questions.length > 0 && (() => {
+          const coreQuestions = questions.filter((q) => q.is_required);
+          const optionalQuestions = questions.filter((q) => !q.is_required);
+          let questionNumber = 0;
 
-            {questions.map((q, i) => (
-              <div key={q.id} className="space-y-2">
-                <Label htmlFor={`q-${q.id}`} className="text-base">
-                  <span className="text-muted-foreground mr-2">{i + 1}.</span>
-                  {q.question}
-                </Label>
-                {q.hint && (
-                  <p className="text-xs text-muted-foreground">{q.hint}</p>
-                )}
-                <Textarea
-                  id={`q-${q.id}`}
-                  value={answers[q.id] || ""}
-                  onChange={(e) => updateAnswer(q.id, e.target.value)}
-                  placeholder="Your answer..."
-                  rows={3}
-                />
-              </div>
-            ))}
-          </div>
-        )}
+          return (
+            <div className="space-y-6">
+              {coreQuestions.length > 0 && (
+                <>
+                  <div>
+                    <h2 className="text-xl font-semibold mb-1">Your Story</h2>
+                    <p className="text-sm text-muted-foreground">
+                      Answer the questions that speak to you. Skip any that don&apos;t.
+                    </p>
+                  </div>
+
+                  {coreQuestions.map((q) => {
+                    questionNumber++;
+                    return (
+                      <div key={q.id} className="space-y-2">
+                        <Label htmlFor={`q-${q.id}`} className="text-base">
+                          <span className="text-muted-foreground mr-2">{questionNumber}.</span>
+                          {q.question}
+                        </Label>
+                        {q.hint && (
+                          <p className="text-xs text-muted-foreground">{q.hint}</p>
+                        )}
+                        <Textarea
+                          id={`q-${q.id}`}
+                          value={answers[q.id] || ""}
+                          onChange={(e) => updateAnswer(q.id, e.target.value)}
+                          placeholder="Your answer..."
+                          rows={3}
+                        />
+                      </div>
+                    );
+                  })}
+                </>
+              )}
+
+              {optionalQuestions.length > 0 && (
+                <>
+                  <Separator />
+                  <div>
+                    <h2 className="text-xl font-semibold mb-1">Optional Questions</h2>
+                    <p className="text-sm text-muted-foreground">
+                      These are totally optional — but they help paint a fuller picture.
+                    </p>
+                  </div>
+
+                  {optionalQuestions.map((q) => {
+                    questionNumber++;
+                    return (
+                      <div key={q.id} className="space-y-2">
+                        <Label htmlFor={`q-${q.id}`} className="text-base">
+                          <span className="text-muted-foreground mr-2">{questionNumber}.</span>
+                          {q.question}
+                        </Label>
+                        {q.hint && (
+                          <p className="text-xs text-muted-foreground">{q.hint}</p>
+                        )}
+                        <Textarea
+                          id={`q-${q.id}`}
+                          value={answers[q.id] || ""}
+                          onChange={(e) => updateAnswer(q.id, e.target.value)}
+                          placeholder="Your answer..."
+                          rows={3}
+                        />
+                      </div>
+                    );
+                  })}
+                </>
+              )}
+            </div>
+          );
+        })()}
 
         {errors.body && (
           <p className="text-sm text-destructive">{errors.body[0]}</p>
@@ -218,10 +266,34 @@ export function TextForm({
           <p className="text-sm text-destructive">{errors._form[0]}</p>
         )}
 
+        <Separator />
+
+        {/* Consent & Release */}
+        <div className="space-y-3">
+          <h3 className="font-semibold">Consent &amp; Release</h3>
+          <p className="text-sm text-muted-foreground">
+            By submitting my story, I give permission for it to be recorded, edited, and shared
+            as part of the 900 Homes project, including on websites and social media.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            I understand I can choose to remain anonymous and may request my story be removed at any time.
+          </p>
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={consentGiven}
+              onChange={(e) => setConsentGiven(e.target.checked)}
+              className="mt-1 h-4 w-4 rounded border-gray-300 accent-amber-700"
+              required
+            />
+            <span className="text-sm font-medium">I agree</span>
+          </label>
+        </div>
+
         <Button
           type="submit"
           size="lg"
-          disabled={submitting}
+          disabled={submitting || !consentGiven}
           className="w-full bg-amber-700 hover:bg-amber-800"
         >
           {submitting ? "Submitting..." : "Submit Story"}

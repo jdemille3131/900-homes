@@ -37,6 +37,7 @@ export interface Story {
   story_type: StoryType;
   submission_mode: SubmissionMode;
   featured_at: string | null;
+  hide_audio: boolean;
 }
 
 export interface StoryMedia {
@@ -62,6 +63,7 @@ export interface Question {
   hint: string | null;
   sort_order: number;
   is_active: boolean;
+  is_required: boolean;
   story_type: QuestionStoryType;
   created_at: string;
   updated_at: string;

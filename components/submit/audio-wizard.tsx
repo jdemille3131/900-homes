@@ -198,7 +198,12 @@ export function AudioWizard({ questions, storyId, onComplete, onBack }: AudioWiz
       {/* Question */}
       {question && (
         <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-2">{question.question}</h2>
+          <div className="flex items-center gap-2 mb-2">
+            <h2 className="text-xl font-semibold">{question.question}</h2>
+          </div>
+          {!question.is_required && (
+            <p className="text-xs text-amber-700 font-medium mb-1">Optional</p>
+          )}
           {question.hint && (
             <p className="text-sm text-muted-foreground">{question.hint}</p>
           )}

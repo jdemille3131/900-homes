@@ -26,6 +26,7 @@ import {
   ArrowDown,
   Check,
   X,
+  Star,
 } from "lucide-react";
 import type { Question } from "@/types/database";
 
@@ -42,6 +43,7 @@ export function QuestionsList({ questions: initial }: QuestionsListProps) {
   const [showAdd, setShowAdd] = useState(false);
   const [newQuestion, setNewQuestion] = useState("");
   const [newHint, setNewHint] = useState("");
+  const [newIsRequired, setNewIsRequired] = useState(true);
   const [loading, setLoading] = useState(false);
 
   function startEdit(q: Question) {
@@ -84,6 +86,23 @@ export function QuestionsList({ questions: initial }: QuestionsListProps) {
     setLoading(false);
   }
 
+  async function handleToggleRequired(q: Question) {
+    setLoading(true);
+    const newRequired = !q.is_required;
+    const result = await updateQuestion(q.id, { is_required: newRequired });
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      setQuestions((prev) =>
+        prev.map((item) =>
+          item.id === q.id ? { ...item, is_required: newRequired } : item
+        )
+      );
+      toast.success(newRequired ? "Question marked as core." : "Question marked as optional.");
+    }
+    setLoading(false);
+  }
+
   async function handleDelete(q: Question) {
     if (!confirm(`Delete "${q.question.slice(0, 50)}..."? This cannot be undone.`)) return;
     setLoading(true);
@@ -100,7 +119,7 @@ export function QuestionsList({ questions: initial }: QuestionsListProps) {
   async function handleAdd() {
     if (!newQuestion.trim()) return;
     setLoading(true);
-    const result = await createQuestion(newQuestion, newHint);
+    const result = await createQuestion(newQuestion, newHint, newIsRequired);
     if (result.error) {
       toast.error(result.error);
     } else {
@@ -200,13 +219,27 @@ export function QuestionsList({ questions: initial }: QuestionsListProps) {
                       {q.hint}
                     </p>
                   )}
-                  {!q.is_active && (
-                    <Badge variant="secondary" className="ml-6 mt-1">
-                      Disabled
-                    </Badge>
-                  )}
+                  <div className="flex items-center gap-2 ml-6 mt-1">
+                    {q.is_required ? (
+                      <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100 text-xs">Core</Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-xs">Optional</Badge>
+                    )}
+                    {!q.is_active && (
+                      <Badge variant="secondary">Disabled</Badge>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleToggleRequired(q)}
+                    disabled={loading}
+                    title={q.is_required ? "Make optional" : "Make core"}
+                  >
+                    <Star className={`h-4 w-4 ${q.is_required ? "fill-amber-500 text-amber-500" : ""}`} />
+                  </Button>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -265,6 +298,16 @@ export function QuestionsList({ questions: initial }: QuestionsListProps) {
                 placeholder="Helper text shown below the question"
               />
             </div>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={newIsRequired}
+                onChange={(e) => setNewIsRequired(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 accent-amber-700"
+              />
+              <span className="text-sm font-medium">Core question</span>
+              <span className="text-xs text-muted-foreground">(uncheck for optional)</span>
+            </label>
             <div className="flex gap-2">
               <Button size="sm" onClick={handleAdd} disabled={loading || !newQuestion.trim()}>
                 <Plus className="h-4 w-4 mr-1" />

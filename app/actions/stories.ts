@@ -27,6 +27,7 @@ const submitStorySchema = z.object({
   neighbourhood: z.string().min(1, "Neighbourhood is required").max(100),
   story_type: z.enum(["life_story", "specific_event"]),
   submission_mode: z.enum(["text", "audio"]),
+  hide_audio: z.boolean().optional(),
   answers: z.record(z.string(), z.string()).optional(),
   media: z.array(
     z.object({
@@ -49,7 +50,7 @@ export async function submitStory(input: SubmitStoryInput) {
   }
 
   const supabase = await createClient();
-  const { media, contributor_email, answers, story_type, submission_mode, ...storyData } = parsed.data;
+  const { media, contributor_email, answers, story_type, submission_mode, hide_audio, ...storyData } = parsed.data;
 
   // Link story to authenticated user if logged in
   const { data: { user } } = await supabase.auth.getUser();
@@ -64,6 +65,7 @@ export async function submitStory(input: SubmitStoryInput) {
       status: "pending",
       submitted_by: user?.id || null,
       answers: answers || null,
+      hide_audio: hide_audio || false,
     })
     .select("id")
     .single();
@@ -183,6 +185,104 @@ export async function toggleFeatureStory(storyId: string) {
   revalidatePath("/stories");
   revalidatePath("/admin/stories");
   return { success: true, featured: !story.featured_at };
+}
+
+export async function toggleHideAudio(storyId: string) {
+  await requireAdmin();
+  const supabase = createServiceClient();
+
+  const { data: story } = await supabase
+    .from("stories")
+    .select("hide_audio")
+    .eq("id", storyId)
+    .single();
+
+  if (!story) return { error: "Story not found" };
+
+  const newValue = !story.hide_audio;
+  const { error } = await supabase
+    .from("stories")
+    .update({ hide_audio: newValue })
+    .eq("id", storyId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/stories");
+  revalidatePath(`/stories/${storyId}`);
+  revalidatePath("/admin/stories");
+  revalidatePath(`/admin/stories/${storyId}`);
+  return { success: true, hideAudio: newValue };
+}
+
+export async function deleteStoryMedia(mediaId: string) {
+  await requireAdmin();
+  const supabase = createServiceClient();
+
+  const { data: media } = await supabase
+    .from("story_media")
+    .select("id, storage_path, media_type, story_id")
+    .eq("id", mediaId)
+    .single();
+
+  if (!media) return { error: "Media not found" };
+
+  const bucketName = `story-${media.media_type}s`;
+  await supabase.storage.from(bucketName).remove([media.storage_path]);
+
+  const { error } = await supabase
+    .from("story_media")
+    .delete()
+    .eq("id", mediaId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/admin/stories/${media.story_id}`);
+  revalidatePath(`/stories/${media.story_id}`);
+  revalidatePath("/stories");
+  return { success: true };
+}
+
+export async function addStoryMedia(
+  storyId: string,
+  mediaItems: {
+    storage_path: string;
+    media_type: "image" | "audio" | "video";
+    file_name?: string;
+    file_size?: number;
+    mime_type?: string;
+  }[]
+) {
+  await requireAdmin();
+  const supabase = createServiceClient();
+
+  // Get current max sort_order
+  const { data: existing } = await supabase
+    .from("story_media")
+    .select("sort_order")
+    .eq("story_id", storyId)
+    .order("sort_order", { ascending: false })
+    .limit(1);
+
+  const startOrder = existing && existing.length > 0 ? existing[0].sort_order + 1 : 0;
+
+  const rows = mediaItems.map((m, i) => ({
+    story_id: storyId,
+    media_type: m.media_type,
+    storage_path: m.storage_path,
+    file_name: m.file_name || null,
+    file_size: m.file_size || null,
+    mime_type: m.mime_type || null,
+    sort_order: startOrder + i,
+  }));
+
+  const { error } = await supabase.from("story_media").insert(rows);
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/admin/stories/${storyId}`);
+  revalidatePath(`/stories/${storyId}`);
+  revalidatePath("/stories");
+  return { success: true };
 }
 
 export async function deleteStory(storyId: string) {
