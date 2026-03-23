@@ -40,6 +40,7 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
     tagline: "",
     accent_color: "#b45309",
     home_count: "",
+    admin_notes: "",
   });
   const [showAdd, setShowAdd] = useState(false);
   const [newData, setNewData] = useState({
@@ -59,6 +60,7 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
       tagline: nh.tagline || "",
       accent_color: nh.accent_color,
       home_count: nh.home_count || "",
+      admin_notes: nh.admin_notes || "",
     });
   }
 
@@ -71,6 +73,7 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
       tagline: editData.tagline || undefined,
       accent_color: editData.accent_color,
       home_count: editData.home_count || undefined,
+      admin_notes: editData.admin_notes || undefined,
     });
     if (result.error) {
       toast.error(result.error);
@@ -180,6 +183,16 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
                     />
                   </div>
                 </div>
+                <div className="space-y-1">
+                  <Label>Admin Notes</Label>
+                  <Textarea
+                    value={editData.admin_notes}
+                    onChange={(e) => setEditData({ ...editData, admin_notes: e.target.value })}
+                    placeholder="Internal notes (only visible to admins)..."
+                    rows={3}
+                    className="text-sm"
+                  />
+                </div>
                 <div className="flex gap-2">
                   <Button size="sm" onClick={saveEdit} disabled={loading}>
                     <Check className="h-4 w-4 mr-1" />
@@ -218,6 +231,12 @@ export function NeighbourhoodsList({ neighbourhoods: initial }: NeighbourhoodsLi
                       {nh.accent_color}
                     </span>
                   </div>
+                  {nh.admin_notes && (
+                    <div className="mt-3 p-3 bg-muted/50 rounded-md border border-dashed">
+                      <p className="text-xs font-medium text-muted-foreground mb-1">Admin Notes</p>
+                      <p className="text-sm whitespace-pre-wrap">{nh.admin_notes}</p>
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
                   <a

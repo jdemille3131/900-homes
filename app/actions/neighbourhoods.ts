@@ -48,6 +48,7 @@ export async function updateNeighbourhood(
     accent_color?: string;
     home_count?: string;
     logo_url?: string;
+    admin_notes?: string;
     is_active?: boolean;
   }
 ) {
