@@ -67,6 +67,13 @@ export default async function NeighbourhoodHomePage({ params }: Props) {
       {/* Hero section */}
       <section className="relative overflow-hidden bg-gradient-to-b from-[var(--nh-accent-light)] to-background py-24 md:py-32">
         <div className="container mx-auto px-4 text-center">
+          {neighbourhood.logo_url && (
+            <img
+              src={neighbourhood.logo_url}
+              alt={displayName}
+              className="mx-auto h-24 w-auto object-contain mb-6 rounded-lg"
+            />
+          )}
           <h2 className="text-xl md:text-2xl font-semibold nh-text mb-4 flex items-center justify-center gap-2">
             <MapPin className="h-5 w-5" />
             {displayName}
