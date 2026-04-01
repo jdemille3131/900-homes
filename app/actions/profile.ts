@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import { createClient, createServiceClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -53,5 +53,44 @@ export async function updateProfile(input: ProfileInput) {
   if (error) return { error: { _form: [error.message] } };
 
   revalidatePath("/account/profile");
+  return { success: true };
+}
+
+/**
+ * Update profile during registration (before email confirmation).
+ * Uses service client since the user may not have a server-side session yet.
+ */
+export async function updateProfileDuringRegistration(userId: string, input: ProfileInput) {
+  const parsed = profileSchema.safeParse(input);
+  if (!parsed.success) {
+    return { error: parsed.error.flatten().fieldErrors };
+  }
+
+  const { display_name, bio, move_in_year, street_address, phone, avatar_url, city, county, state } = parsed.data;
+
+  const yearNum = move_in_year ? parseInt(move_in_year, 10) : null;
+  if (yearNum !== null && (isNaN(yearNum) || yearNum < 1950 || yearNum > new Date().getFullYear())) {
+    return { error: { move_in_year: ["Please enter a valid year."] } };
+  }
+
+  const supabase = createServiceClient();
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      display_name,
+      bio: bio || null,
+      move_in_year: yearNum,
+      street_address: street_address || null,
+      phone: phone || null,
+      avatar_url: avatar_url || null,
+      city: city || null,
+      county: county || null,
+      state: state || null,
+    })
+    .eq("id", userId);
+
+  if (error) return { error: { _form: [error.message] } };
+
   return { success: true };
 }

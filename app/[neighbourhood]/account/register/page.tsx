@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Mail, Shield, ArrowLeft } from "lucide-react";
 import { AvatarUploader } from "@/components/avatar-uploader";
-import { updateProfile } from "@/app/actions/profile";
+import { updateProfileDuringRegistration } from "@/app/actions/profile";
 import { toast } from "sonner";
 import { useNeighbourhood } from "@/components/neighbourhood-context";
 
@@ -24,6 +24,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [sentEmail, setSentEmail] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
+  const [displayName, setDisplayName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   async function handleStep1(e: React.FormEvent<HTMLFormElement>) {
@@ -34,14 +35,14 @@ export default function RegisterPage() {
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-    const displayName = formData.get("display_name") as string;
+    const name = formData.get("display_name") as string;
 
     const supabase = createClient();
     const { data, error: authError } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { display_name: displayName, neighbourhood_id: neighbourhood.id },
+        data: { display_name: name, neighbourhood_id: neighbourhood.id },
         emailRedirectTo: `${window.location.origin}${href("/account/confirm")}`,
       },
     });
@@ -54,6 +55,7 @@ export default function RegisterPage() {
 
     setSentEmail(email);
     setUserId(data.user?.id || null);
+    setDisplayName(name);
     setStep(2);
     setLoading(false);
   }
@@ -64,8 +66,8 @@ export default function RegisterPage() {
 
     const formData = new FormData(e.currentTarget);
 
-    const result = await updateProfile({
-      display_name: formData.get("display_name") as string || sentEmail,
+    const result = await updateProfileDuringRegistration(userId!, {
+      display_name: displayName,
       bio: formData.get("bio") as string,
       move_in_year: (formData.get("move_in_year") as string) || "",
       street_address: formData.get("street_address") as string,
@@ -77,7 +79,11 @@ export default function RegisterPage() {
     });
 
     if (result.error) {
-      toast.error("Please check the form for errors.");
+      const errors = result.error;
+      const messages = typeof errors === "object"
+        ? Object.entries(errors).map(([key, val]) => `${key}: ${val}`).join(", ")
+        : "Something went wrong saving your profile.";
+      toast.error(messages);
       setLoading(false);
       return;
     }
