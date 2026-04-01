@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,10 +8,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { MediaUploader, type UploadedMedia } from "@/components/media-uploader";
-import { AudioRecorder } from "@/components/audio-recorder";
+import { createClient } from "@/utils/supabase/client";
 import { submitStory } from "@/app/actions/stories";
 import { toast } from "sonner";
-import { ArrowLeft, Play, SkipForward } from "lucide-react";
+import { ArrowLeft, Mic, Square, Trash2, SkipForward } from "lucide-react";
 import type { Question, StoryType } from "@/types/database";
 
 interface AudioReviewProps {
@@ -44,14 +44,95 @@ export function AudioReview({
   const [hideAudio, setHideAudio] = useState(false);
 
   const [directRecordings, setDirectRecordings] = useState<UploadedMedia[]>([]);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recDuration, setRecDuration] = useState(0);
+  const [recUploading, setRecUploading] = useState(false);
+  const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleExtraMedia = useCallback((media: UploadedMedia[]) => {
     setExtraMedia(media);
   }, []);
 
-  const handleRecorded = useCallback((recorded: UploadedMedia) => {
-    setDirectRecordings((prev) => [...prev, recorded]);
+  const startRecording = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+      chunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        setRecordedBlob(blob);
+        stream.getTracks().forEach((track) => track.stop());
+      };
+
+      mediaRecorder.start(1000);
+      mediaRecorderRef.current = mediaRecorder;
+      setIsRecording(true);
+      setRecDuration(0);
+      intervalRef.current = setInterval(() => setRecDuration((d) => d + 1), 1000);
+    } catch {
+      toast.error("Microphone access denied.");
+    }
   }, []);
+
+  const stopRecording = useCallback(() => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    }
+  }, [isRecording]);
+
+  const uploadAndSave = useCallback(async () => {
+    if (!recordedBlob) return;
+    setRecUploading(true);
+    const supabase = createClient();
+    const path = `${storyId}/${crypto.randomUUID()}.webm`;
+
+    const { error } = await supabase.storage
+      .from("story-audio")
+      .upload(path, recordedBlob, { contentType: "audio/webm", cacheControl: "3600" });
+
+    if (error) {
+      toast.error("Upload failed.");
+      setRecUploading(false);
+      return;
+    }
+
+    const { data: { publicUrl } } = supabase.storage.from("story-audio").getPublicUrl(path);
+
+    setDirectRecordings((prev) => [...prev, {
+      storage_path: path,
+      media_type: "audio",
+      file_name: "recording.webm",
+      file_size: recordedBlob.size,
+      mime_type: "audio/webm",
+      preview_url: publicUrl,
+    }]);
+    setRecordedBlob(null);
+    setRecUploading(false);
+    setRecDuration(0);
+  }, [recordedBlob, storyId]);
+
+  const discardRecording = useCallback(() => {
+    setRecordedBlob(null);
+    setRecDuration(0);
+  }, []);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  };
 
   function buildBody(): string {
     const answeredQuestions = questions.filter((q) => recordings[q.id]);
@@ -262,12 +343,76 @@ export function AudioReview({
             <h3 className="font-semibold mb-1">Record Your Story</h3>
             <p className="text-sm text-muted-foreground">
               {directRecordings.length === 0
-                ? "Hit the button below to start recording. You can record multiple clips."
+                ? "Tap the button below to start recording. You can record multiple clips."
                 : "You can record additional clips if you'd like."}
             </p>
           </div>
           <div className="border rounded-lg p-6 bg-muted/30">
-            <AudioRecorder storyId={storyId} onRecorded={handleRecorded} />
+            {!isRecording && !recordedBlob && (
+              <div className="flex flex-col items-center gap-4 py-4">
+                <Button
+                  type="button"
+                  size="lg"
+                  onClick={startRecording}
+                  className="nh-bg nh-bg-hover rounded-full h-16 w-16"
+                >
+                  <Mic className="h-6 w-6" />
+                </Button>
+                <p className="text-sm text-muted-foreground">Tap to start recording</p>
+              </div>
+            )}
+
+            {isRecording && (
+              <div className="flex flex-col items-center gap-4 py-4">
+                <div className="flex items-center gap-3">
+                  <span className="h-3 w-3 rounded-full bg-red-500 animate-pulse" />
+                  <span className="text-lg font-mono">{formatTime(recDuration)}</span>
+                </div>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="lg"
+                  onClick={stopRecording}
+                  className="rounded-full h-16 w-16"
+                >
+                  <Square className="h-6 w-6" />
+                </Button>
+                <p className="text-sm text-muted-foreground">Recording...</p>
+              </div>
+            )}
+
+            {recordedBlob && !isRecording && (
+              <div className="space-y-4">
+                <audio
+                  src={URL.createObjectURL(recordedBlob)}
+                  controls
+                  className="w-full h-10"
+                />
+                <div className="flex items-center gap-3 justify-center">
+                  <span className="text-sm text-muted-foreground">
+                    {formatTime(recDuration)}
+                  </span>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={uploadAndSave}
+                    disabled={recUploading}
+                    className="nh-bg nh-bg-hover"
+                  >
+                    {recUploading ? "Saving..." : "Use This"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={discardRecording}
+                  >
+                    <Trash2 className="h-4 w-4 mr-1" />
+                    Discard
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
           {directRecordings.length > 0 && (
             <div className="space-y-2">
