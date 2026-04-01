@@ -21,14 +21,14 @@ export default async function MarketingPage() {
 
       <main className="flex-1">
         {/* Hero */}
-        <section className="py-24 md:py-32 text-center">
+        <section className="py-16 md:py-20 text-center">
           <div className="container mx-auto px-4">
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
               Every neighbourhood has
               <br />
               <span className="text-muted-foreground">a story worth telling.</span>
             </h1>
-            <p className="mx-auto max-w-2xl text-lg md:text-xl text-muted-foreground mb-12">
+            <p className="mx-auto max-w-2xl text-lg md:text-xl text-muted-foreground">
               900 Homes is a community storytelling project dedicated to finding and
               preserving the life stories of the people who make our neighbourhoods
               what they are — before they go untold.
