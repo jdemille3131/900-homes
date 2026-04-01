@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { MediaPlayer } from "@/components/media-player";
+import { PhotoGallery } from "@/components/photo-gallery";
 import { StoryBody } from "@/components/story-body";
 import { AudioStoryPlayer } from "@/components/audio-story-player";
 import { StoryCard } from "@/components/story-card";
@@ -164,20 +165,38 @@ export default async function StoryDetailPage({ params }: Props) {
           )}
         </header>
 
-        {/* Non-audio media (images, videos) — shown for text stories and hidden-audio stories */}
-        {(!isAudio || hideAudio) && nonAudioMedia.length > 0 && (
-          <div className="space-y-4 mb-8">
-            {nonAudioMedia.map((m) => {
-              const bucket = BUCKET_MAP[m.media_type];
-              const { data: { publicUrl } } = supabase.storage
-                .from(bucket)
-                .getPublicUrl(m.storage_path);
-              return (
-                <MediaPlayer key={m.id} media={m} publicUrl={publicUrl} />
-              );
-            })}
-          </div>
-        )}
+        {/* Images — masonry grid with lightbox */}
+        {(!isAudio || hideAudio) && (() => {
+          const imageMedia = nonAudioMedia.filter((m) => m.media_type === "image");
+          const videoMedia = nonAudioMedia.filter((m) => m.media_type === "video");
+
+          const galleryImages = imageMedia.map((m) => {
+            const { data: { publicUrl } } = supabase.storage
+              .from("story-images")
+              .getPublicUrl(m.storage_path);
+            return { src: publicUrl, alt: m.file_name || "Story photo" };
+          });
+
+          return (
+            <>
+              {galleryImages.length > 0 && (
+                <div className="mb-8">
+                  <PhotoGallery images={galleryImages} />
+                </div>
+              )}
+              {videoMedia.length > 0 && (
+                <div className="space-y-4 mb-8">
+                  {videoMedia.map((m) => {
+                    const { data: { publicUrl } } = supabase.storage
+                      .from("story-video")
+                      .getPublicUrl(m.storage_path);
+                    return <MediaPlayer key={m.id} media={m} publicUrl={publicUrl} />;
+                  })}
+                </div>
+              )}
+            </>
+          );
+        })()}
 
         {/* Audio story with audio visible: show player */}
         {isAudio && !hideAudio && audioQuestions.length > 0 && (
