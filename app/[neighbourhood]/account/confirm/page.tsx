@@ -73,24 +73,24 @@ export default function ConfirmPage() {
               <CheckCircle className="h-10 w-10 text-green-600" />
             </div>
           </div>
-          <CardTitle className="text-2xl">Email Confirmed!</CardTitle>
+          <CardTitle className="text-2xl">You&apos;re All Set!</CardTitle>
           <CardDescription className="mt-2">
-            Your account is ready. Welcome to 900 Homes.
+            Your account is confirmed and your profile is ready. Welcome to 900 Homes.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <Link
-            href={href("/account/profile")}
+            href={href("/submit")}
             className="inline-flex items-center justify-center h-10 px-6 rounded-lg nh-bg text-white font-medium nh-bg-hover transition-colors"
           >
-            Set Up Your Profile
+            Share Your First Story
           </Link>
           <div>
             <Link
-              href={href("/submit")}
+              href={href("/")}
               className="inline-block text-sm nh-text hover:underline font-medium"
             >
-              Or share your first story
+              Explore your neighbourhood
             </Link>
           </div>
         </CardContent>
