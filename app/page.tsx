@@ -11,8 +11,11 @@ export default async function MarketingPage() {
     <div className="min-h-screen flex flex-col">
       {/* Simple header */}
       <header className="border-b bg-background/95">
-        <div className="container mx-auto flex h-16 items-center px-4">
-          <span className="text-2xl font-bold tracking-tight">900 Homes</span>
+        <div className="container mx-auto flex h-16 items-center justify-between px-4">
+          <Link href="/" className="text-2xl font-bold tracking-tight">900 Homes</Link>
+          <Link href="/about" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            Why 900 Homes?
+          </Link>
         </div>
       </header>
 
