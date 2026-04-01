@@ -17,11 +17,8 @@ COPY . .
 # Next.js collects anonymous telemetry — disable in Docker
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Build args for public env vars (baked into the client bundle at build time)
-ARG NEXT_PUBLIC_SUPABASE_URL
-ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
-ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
-ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+# Copy .env.local so Next.js can read NEXT_PUBLIC_* vars at build time
+COPY .env.local .env.local
 
 RUN npm run build
 
