@@ -103,5 +103,19 @@ export interface Faq {
   updated_at: string;
 }
 
+export interface PageSection {
+  id: string;
+  page: string;
+  section_key: string;
+  heading: string;
+  body: string;
+  icon: string | null;
+  icon_color: string | null;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 // JSON stored in stories.answers: { [questionId]: answer }
 export type StoryAnswers = Record<string, string>;
