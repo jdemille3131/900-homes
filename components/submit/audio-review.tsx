@@ -137,13 +137,16 @@ export function AudioReview({
     <div>
       <Button variant="ghost" size="sm" onClick={onBack} className="mb-4">
         <ArrowLeft className="h-4 w-4 mr-1" />
-        Back to Recording
+        {questions.length > 0 ? "Back to Recording" : "Back"}
       </Button>
 
-      <h2 className="text-xl font-semibold mb-1">Review & Submit</h2>
+      <h2 className="text-xl font-semibold mb-1">
+        {questions.length > 0 ? "Review & Submit" : "Record & Submit Your Story"}
+      </h2>
       <p className="text-sm text-muted-foreground mb-6">
-        {recordedCount} answer{recordedCount !== 1 ? "s" : ""} recorded
-        {skippedCount > 0 && `, ${skippedCount} skipped`}. Fill in your details below and submit.
+        {questions.length > 0
+          ? `${recordedCount} answer${recordedCount !== 1 ? "s" : ""} recorded${skippedCount > 0 ? `, ${skippedCount} skipped` : ""}. Fill in your details below and submit.`
+          : "Record your story, add some details, and submit."}
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -253,13 +256,23 @@ export function AudioReview({
 
         <Separator />
 
-        {/* Record audio directly */}
-        <div className="space-y-3">
-          <Label>Record Audio</Label>
-          <AudioRecorder storyId={storyId} onRecorded={handleRecorded} />
+        {/* Record audio */}
+        <div className="space-y-4">
+          <div>
+            <h3 className="font-semibold mb-1">Record Your Story</h3>
+            <p className="text-sm text-muted-foreground">
+              {directRecordings.length === 0
+                ? "Hit the button below to start recording. You can record multiple clips."
+                : "You can record additional clips if you'd like."}
+            </p>
+          </div>
+          <div className="border rounded-lg p-6 bg-muted/30">
+            <AudioRecorder storyId={storyId} onRecorded={handleRecorded} />
+          </div>
           {directRecordings.length > 0 && (
             <div className="space-y-2">
-              {directRecordings.map((r, i) => (
+              <p className="text-sm font-medium">{directRecordings.length} recording{directRecordings.length !== 1 ? "s" : ""}</p>
+              {directRecordings.map((r) => (
                 <div key={r.storage_path} className="flex items-center gap-3 p-3 rounded-lg border bg-muted/30">
                   <audio src={r.preview_url} controls className="flex-1 h-8" />
                   <span className="text-xs text-muted-foreground">
