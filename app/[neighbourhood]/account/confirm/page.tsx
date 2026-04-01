@@ -15,19 +15,25 @@ export default function ConfirmPage() {
   useEffect(() => {
     const supabase = createClient();
 
-    // Supabase puts the auth tokens in the URL hash after email confirmation.
-    // The client library automatically picks them up via onAuthStateChange.
+    // Check if already authenticated (e.g. session set by /auth/callback route)
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        setStatus("success");
+      }
+    });
+
+    // Also listen for auth state changes (handles hash-based token flow)
     supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_IN") {
         setStatus("success");
       }
     });
 
-    // If the user lands here without a valid token, show an error after a timeout
+    // If neither method works, show an error after a timeout
     const timeout = setTimeout(() => {
       setStatus((prev) => (prev === "loading" ? "error" : prev));
       setErrorMsg("The confirmation link may have expired or already been used.");
-    }, 5000);
+    }, 8000);
 
     return () => clearTimeout(timeout);
   }, []);

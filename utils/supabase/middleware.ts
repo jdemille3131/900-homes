@@ -71,7 +71,7 @@ export async function updateSession(request: NextRequest) {
 
   // ---- Neighbourhood routes ----
   // Pattern: /[slug]/... where slug is not a known root route
-  const knownRootRoutes = ["admin", "api", "_next", "favicon.ico"];
+  const knownRootRoutes = ["admin", "api", "auth", "_next", "favicon.ico", "about"];
   const segments = pathname.split("/").filter(Boolean);
   const firstSegment = segments[0];
 
