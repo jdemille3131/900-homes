@@ -96,14 +96,23 @@ export default async function MarketingPage() {
               We&apos;re always looking for new communities to partner with.
               Get in touch to start collecting your neighbourhood&apos;s stories.
             </p>
+            <a
+              href="mailto:jason@900homes.org"
+              className="inline-flex items-center justify-center h-10 px-6 rounded-lg bg-foreground text-background font-medium hover:bg-foreground/90 transition-colors"
+            >
+              Get in Touch
+            </a>
           </div>
         </section>
       </main>
 
       {/* Simple footer */}
       <footer className="border-t bg-muted/40">
-        <div className="container mx-auto px-4 py-6 text-center text-xs text-muted-foreground">
-          &copy; {new Date().getFullYear()} 900 Homes. All rights reserved.
+        <div className="container mx-auto px-4 py-6 flex items-center justify-between text-xs text-muted-foreground">
+          <span>&copy; {new Date().getFullYear()} 900 Homes. All rights reserved.</span>
+          <a href="mailto:jason@900homes.org" className="hover:text-foreground transition-colors">
+            jason@900homes.org
+          </a>
         </div>
       </footer>
     </div>

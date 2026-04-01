@@ -37,6 +37,12 @@ export function SiteFooter({ neighbourhood }: SiteFooterProps) {
                 </Link>
               </>
             ) : null}
+            <a
+              href="mailto:jason@900homes.org"
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              Contact
+            </a>
             <Link
               href="/admin/login"
               className="text-sm text-muted-foreground hover:text-foreground"

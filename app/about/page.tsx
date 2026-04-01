@@ -147,14 +147,25 @@ export default async function AboutPage() {
             >
               Find Your Neighbourhood
             </Link>
+            <div className="mt-4">
+              <a
+                href="mailto:jason@900homes.org"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Questions? Email us
+              </a>
+            </div>
           </div>
         </section>
       </main>
 
       {/* Footer */}
       <footer className="border-t bg-muted/40">
-        <div className="container mx-auto px-4 py-6 text-center text-xs text-muted-foreground">
-          &copy; {new Date().getFullYear()} 900 Homes. All rights reserved.
+        <div className="container mx-auto px-4 py-6 flex items-center justify-between text-xs text-muted-foreground">
+          <span>&copy; {new Date().getFullYear()} 900 Homes. All rights reserved.</span>
+          <a href="mailto:jason@900homes.org" className="hover:text-foreground transition-colors">
+            jason@900homes.org
+          </a>
         </div>
       </footer>
     </div>

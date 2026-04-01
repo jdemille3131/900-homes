@@ -49,10 +49,12 @@ export function SiteHeader({ neighbourhood }: SiteHeaderProps) {
         { href: `${prefix}/submit`, label: "Share Your Story" },
         { href: `${prefix}/faq`, label: "FAQ" },
         { href: "/about", label: "Why 900 Homes?" },
+        { href: "mailto:jason@900homes.org", label: "Contact" },
       ]
     : [
         { href: "/", label: "Home" },
         { href: "/about", label: "Why 900 Homes?" },
+        { href: "mailto:jason@900homes.org", label: "Contact" },
       ];
 
   return (
