@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { MediaUploader, type UploadedMedia } from "@/components/media-uploader";
+import { AudioRecorder } from "@/components/audio-recorder";
 import { submitStory } from "@/app/actions/stories";
 import { toast } from "sonner";
 import { ArrowLeft, Play, SkipForward } from "lucide-react";
@@ -42,8 +43,14 @@ export function AudioReview({
   const [consentGiven, setConsentGiven] = useState(false);
   const [hideAudio, setHideAudio] = useState(false);
 
+  const [directRecordings, setDirectRecordings] = useState<UploadedMedia[]>([]);
+
   const handleExtraMedia = useCallback((media: UploadedMedia[]) => {
     setExtraMedia(media);
+  }, []);
+
+  const handleRecorded = useCallback((recorded: UploadedMedia) => {
+    setDirectRecordings((prev) => [...prev, recorded]);
   }, []);
 
   function buildBody(): string {
@@ -65,7 +72,7 @@ export function AudioReview({
 
     const formData = new FormData(e.currentTarget);
 
-    const recordingCount = Object.keys(recordings).length;
+    const recordingCount = Object.keys(recordings).length + directRecordings.length;
     const body = buildBody();
 
     if (recordingCount === 0 && !body) {
@@ -82,6 +89,14 @@ export function AudioReview({
       file_size: media.file_size,
       mime_type: media.mime_type,
       question_id: questionId,
+    }));
+
+    const directAudioMedia = directRecordings.map((m) => ({
+      storage_path: m.storage_path,
+      media_type: m.media_type,
+      file_name: m.file_name,
+      file_size: m.file_size,
+      mime_type: m.mime_type,
     }));
 
     const otherMedia = extraMedia.map((m) => ({
@@ -102,7 +117,7 @@ export function AudioReview({
       submission_mode: "audio",
       hide_audio: hideAudio,
       answers: {},
-      media: [...audioMedia, ...otherMedia],
+      media: [...audioMedia, ...directAudioMedia, ...otherMedia],
     });
 
     if (result.error) {
@@ -234,6 +249,26 @@ export function AudioReview({
             placeholder="Write here..."
             rows={4}
           />
+        </div>
+
+        <Separator />
+
+        {/* Record audio directly */}
+        <div className="space-y-3">
+          <Label>Record Audio</Label>
+          <AudioRecorder storyId={storyId} onRecorded={handleRecorded} />
+          {directRecordings.length > 0 && (
+            <div className="space-y-2">
+              {directRecordings.map((r, i) => (
+                <div key={r.storage_path} className="flex items-center gap-3 p-3 rounded-lg border bg-muted/30">
+                  <audio src={r.preview_url} controls className="flex-1 h-8" />
+                  <span className="text-xs text-muted-foreground">
+                    {(r.file_size / 1024 / 1024).toFixed(1)} MB
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <Separator />
