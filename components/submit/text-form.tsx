@@ -280,13 +280,15 @@ export function TextForm({
 
         {/* Media */}
         <div className="space-y-3">
-          <Label>Photos, Audio, or Video (optional)</Label>
+          <Label>{storyType === "life_story" ? "Photos, Audio, or Video (optional)" : "Photos or Video (optional)"}</Label>
           <MediaUploader
             storyId={storyId}
             media={media}
             onMediaChange={setMedia}
           />
-          <AudioRecorder storyId={storyId} onRecorded={handleRecorded} />
+          {storyType === "life_story" && (
+            <AudioRecorder storyId={storyId} onRecorded={handleRecorded} />
+          )}
         </div>
 
         {errors._form && (
