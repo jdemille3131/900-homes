@@ -38,6 +38,7 @@ export function TextForm({
   const [media, setMedia] = useState<UploadedMedia[]>([]);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [freeformBody, setFreeformBody] = useState("");
   const [consentGiven, setConsentGiven] = useState(false);
 
   const handleRecorded = useCallback((recorded: UploadedMedia) => {
@@ -49,10 +50,15 @@ export function TextForm({
   }
 
   function buildBody(): string {
-    return questions
+    const questionParts = questions
       .filter((q) => answers[q.id]?.trim())
       .map((q) => `**${q.question}**\n${answers[q.id].trim()}`)
       .join("\n\n");
+
+    const freeform = freeformBody.trim();
+
+    if (questionParts && freeform) return `${questionParts}\n\n${freeform}`;
+    return questionParts || freeform;
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -246,6 +252,25 @@ export function TextForm({
             </div>
           );
         })()}
+
+        {/* Freeform story body */}
+        <div className="space-y-2">
+          <Separator />
+          <h2 className="text-xl font-semibold mb-1">
+            {questions.length > 0 ? "Anything Else?" : "Your Story"}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {questions.length > 0
+              ? "Want to add anything beyond the questions above? Write freely here."
+              : "Tell us what happened — in your own words, however you'd like."}
+          </p>
+          <Textarea
+            value={freeformBody}
+            onChange={(e) => setFreeformBody(e.target.value)}
+            placeholder="Write your story here..."
+            rows={6}
+          />
+        </div>
 
         {errors.body && (
           <p className="text-sm text-destructive">{errors.body[0]}</p>

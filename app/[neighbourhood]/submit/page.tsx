@@ -144,12 +144,25 @@ export default function SubmitPage() {
         />
       )}
 
-      {step === "form" && submissionMode === "audio" && storyType && (
+      {step === "form" && submissionMode === "audio" && storyType && filteredQuestions.length > 0 && (
         <AudioWizard
           questions={filteredQuestions}
           storyId={storyId}
           onComplete={handleAudioComplete}
           onBack={() => setStep("mode")}
+        />
+      )}
+
+      {step === "form" && submissionMode === "audio" && storyType && filteredQuestions.length === 0 && (
+        <AudioReview
+          storyType={storyType}
+          questions={[]}
+          recordings={{}}
+          storyId={storyId}
+          defaultName={defaultName}
+          defaultEmail={defaultEmail}
+          onBack={() => setStep("mode")}
+          successUrl={href("/submit/success")}
         />
       )}
 

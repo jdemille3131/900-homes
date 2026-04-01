@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { MediaUploader, type UploadedMedia } from "@/components/media-uploader";
@@ -37,6 +38,7 @@ export function AudioReview({
   const [submitting, setSubmitting] = useState(false);
   const [extraMedia, setExtraMedia] = useState<UploadedMedia[]>([]);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
+  const [freeformBody, setFreeformBody] = useState("");
   const [consentGiven, setConsentGiven] = useState(false);
   const [hideAudio, setHideAudio] = useState(false);
 
@@ -44,13 +46,16 @@ export function AudioReview({
     setExtraMedia(media);
   }, []);
 
-  // Build a text body summarizing which questions were answered via audio
   function buildBody(): string {
     const answeredQuestions = questions.filter((q) => recordings[q.id]);
-    if (answeredQuestions.length === 0) return "";
-    return answeredQuestions
+    const audioParts = answeredQuestions
       .map((q) => `**${q.question}**\n[Audio response]`)
       .join("\n\n");
+
+    const freeform = freeformBody.trim();
+
+    if (audioParts && freeform) return `${audioParts}\n\n${freeform}`;
+    return audioParts || freeform;
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -61,13 +66,13 @@ export function AudioReview({
     const formData = new FormData(e.currentTarget);
 
     const recordingCount = Object.keys(recordings).length;
-    if (recordingCount === 0) {
-      toast.error("Please record at least one answer.");
+    const body = buildBody();
+
+    if (recordingCount === 0 && !body) {
+      toast.error("Please record at least one answer or write a description.");
       setSubmitting(false);
       return;
     }
-
-    const body = buildBody();
 
     // Build media array: audio recordings (with question_id) + any extra uploads
     const audioMedia = Object.entries(recordings).map(([questionId, media]) => ({
@@ -209,6 +214,26 @@ export function AudioReview({
               </div>
             );
           })}
+        </div>
+
+        <Separator />
+
+        {/* Freeform description */}
+        <div className="space-y-2">
+          <h3 className="font-semibold">
+            {questions.length > 0 ? "Anything Else?" : "Describe Your Story"}
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {questions.length > 0
+              ? "Optionally add a written description alongside your recordings."
+              : "Tell us about your story — what happened, when, and why it matters to you."}
+          </p>
+          <Textarea
+            value={freeformBody}
+            onChange={(e) => setFreeformBody(e.target.value)}
+            placeholder="Write here..."
+            rows={4}
+          />
         </div>
 
         <Separator />
